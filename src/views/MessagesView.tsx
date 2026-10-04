@@ -155,31 +155,41 @@ export const MessagesView: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto h-[calc(100vh-8rem)] pb-4">
-      <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden flex h-full">
-        {/* Left Side: Conversation List */}
-        <div className="w-80 sm:w-96 border-r border-slate-200 flex flex-col shrink-0">
-          <div className="p-4 border-b border-slate-200 bg-slate-50/50">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <MessageSquareLock className="w-4 h-4 text-sky-600" />
-                <span>Encrypted Chats</span>
-              </h2>
-              <span className="text-[10px] bg-sky-100 text-sky-800 font-bold px-1.5 py-0.5 rounded">
-                E2EE Active
-              </span>
-            </div>
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs overflow-hidden flex flex-col h-full">
+        {/* Top Colorful Brand Stripes */}
+        <div className="h-1.5 w-full flex shrink-0">
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-amber-400" />
+        </div>
 
-            <div className="relative">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchVal}
-                onChange={(e) => setSearchVal(e.target.value)}
-                placeholder="Search conversations..."
-                className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
-              />
+        <div className="flex flex-1 min-h-0">
+          {/* Left Side: Conversation List */}
+          <div className="w-80 sm:w-96 border-r border-slate-200 flex flex-col shrink-0">
+            <div className="p-4 border-b border-slate-200 bg-slate-50/50">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <MessageSquareLock className="w-4 h-4 text-rose-600" />
+                  <span>Encrypted Chats</span>
+                </h2>
+                <span className="text-[10px] bg-emerald-600 text-white font-bold px-2 py-0.5 rounded-full shadow-xs">
+                  E2EE Active
+                </span>
+              </div>
+
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-rose-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchVal}
+                  onChange={(e) => setSearchVal(e.target.value)}
+                  placeholder="Search conversations..."
+                  className="w-full pl-8 pr-3 py-1.5 text-xs rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                />
+              </div>
             </div>
-          </div>
 
           <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
             {/* Direct Messages Section */}
@@ -540,6 +550,7 @@ export const MessagesView: React.FC = () => {
           </div>
         </div>
       )}
+        </div>
       </div>
 
       {/* Safety Numbers Modal */}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { GroupCategory, GroupPrivacy } from '../types';
-import { UNIVERSITIES_LIST } from '../data/mockData';
+import { UniversitySelectPicker } from './UniversitySelectPicker';
 import { Users, X, BookOpen, Briefcase, Network, HeartHandshake, Shield } from 'lucide-react';
 
 export const CreateGroupModal: React.FC = () => {
@@ -194,18 +194,13 @@ export const CreateGroupModal: React.FC = () => {
                   <span>Cross-University</span>
                 </label>
               </div>
-              <select
+              <UniversitySelectPicker
+                value={isCrossUni ? 'Cross-University' : university}
+                onChange={setUniversity}
                 disabled={isCrossUni}
-                value={university}
-                onChange={(e) => setUniversity(e.target.value)}
-                className="w-full text-xs rounded-lg border border-slate-200 p-2.5 bg-slate-50 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500 disabled:opacity-50"
-              >
-                {UNIVERSITIES_LIST.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
+                label=""
+                placeholder="Select worldwide approved university..."
+              />
             </div>
 
             <div>

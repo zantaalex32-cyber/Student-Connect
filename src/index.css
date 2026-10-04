@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+/* Students Connect Vibrant Solid Color Palette & Theme Styling */
+:root {
+  --brand-blue: #0284c7;
+  --brand-emerald: #059669;
+  --brand-amber: #f59e0b;
+  --brand-rose: #e11d48;
+  --brand-purple: #7c3aed;
+  --brand-indigo: #4f46e5;
+  --brand-teal: #0d9488;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

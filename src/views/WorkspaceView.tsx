@@ -8,6 +8,7 @@ import {
   FileText, 
   Download, 
   CheckCircle2, 
+  Check,
   Clock, 
   AlertCircle, 
   Send, 
@@ -135,110 +136,121 @@ export const WorkspaceView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Workspace Header & Switcher */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <img
-              src={currentGroup.avatar}
-              alt={currentGroup.name}
-              className="w-14 h-14 rounded-2xl object-cover border border-slate-200 shrink-0"
-            />
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span
-                  className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white"
-                  style={{ backgroundColor: currentGroup.solidBadgeColor }}
-                >
-                  {currentGroup.category.replace('_', ' ')}
-                </span>
-                <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                  {currentGroup.university}
-                </span>
-                {myMembership && (
-                  <span className="text-[10px] font-bold text-sky-800 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded uppercase">
-                    Role: {myMembership.role}
-                  </span>
-                )}
-              </div>
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 mt-1">
-                {currentGroup.name}
-              </h1>
-              <p className="text-xs text-slate-500 mt-0.5">
-                {currentGroup.description}
-              </p>
-            </div>
-          </div>
-
-          {/* Group Switcher dropdown */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="relative">
-              <select
-                value={currentGroup.id}
-                onChange={(e) => {
-                  const g = groups.find(x => x.id === e.target.value);
-                  if (g) setCurrentGroup(g);
-                }}
-                className="py-1.5 pl-3 pr-8 text-xs font-semibold rounded-xl bg-slate-50 border border-slate-200 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
-              >
-                {groups.map((g) => (
-                  <option key={g.id} value={g.id}>
-                    Switch: {g.name.length > 25 ? g.name.substring(0, 25) + '...' : g.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        {/* Top Colorful Brand Stripes */}
+        <div className="h-1.5 w-full flex">
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-amber-400" />
         </div>
 
-        {/* Workspace Navigation Tabs */}
-        <div className="flex items-center gap-2 mt-6 pt-4 border-t border-slate-100 overflow-x-auto text-xs">
-          <button
-            onClick={() => setActiveWorkspaceTab('files')}
-            className={`px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition shrink-0 ${
-              activeTab === 'files'
-                ? 'bg-sky-600 text-white shadow-xs font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <FolderKanban className="w-4 h-4" />
-            <span>Files & Resources ({groupResources.length})</span>
-          </button>
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-4">
+              <img
+                src={currentGroup.avatar}
+                alt={currentGroup.name}
+                className="w-14 h-14 rounded-2xl object-cover ring-2 ring-sky-300 shrink-0"
+              />
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span
+                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded text-white"
+                    style={{ backgroundColor: currentGroup.solidBadgeColor }}
+                  >
+                    {currentGroup.category.replace('_', ' ')}
+                  </span>
+                  <span className="text-[10px] font-bold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                    {currentGroup.university}
+                  </span>
+                  {myMembership && (
+                    <span className="text-[10px] font-bold text-sky-900 bg-sky-100 border border-sky-300 px-2 py-0.5 rounded uppercase">
+                      Role: {myMembership.role}
+                    </span>
+                  )}
+                </div>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-900 mt-1">
+                  {currentGroup.name}
+                </h1>
+                <p className="text-xs text-slate-600 mt-0.5">
+                  {currentGroup.description}
+                </p>
+              </div>
+            </div>
 
-          <button
-            onClick={() => setActiveWorkspaceTab('tasks')}
-            className={`px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition shrink-0 ${
-              activeTab === 'tasks'
-                ? 'bg-sky-600 text-white shadow-xs font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <CheckSquare className="w-4 h-4" />
-            <span>Tasks & Activities ({groupTasks.length})</span>
-          </button>
+            {/* Group Switcher dropdown */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="relative">
+                <select
+                  value={currentGroup.id}
+                  onChange={(e) => {
+                    const g = groups.find(x => x.id === e.target.value);
+                    if (g) setCurrentGroup(g);
+                  }}
+                  className="py-2 pl-3 pr-8 text-xs font-bold rounded-xl bg-slate-50 border border-slate-300 text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                >
+                  {groups.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      Switch: {g.name.length > 25 ? g.name.substring(0, 25) + '...' : g.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
 
-          <button
-            onClick={() => setActiveWorkspaceTab('chat')}
-            className={`px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition shrink-0 ${
-              activeTab === 'chat'
-                ? 'bg-sky-600 text-white shadow-xs font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <MessageSquare className="w-4 h-4" />
-            <span>Team Discussion</span>
-          </button>
+          {/* Workspace Navigation Tabs */}
+          <div className="flex items-center gap-2 mt-6 pt-4 border-t border-slate-100 overflow-x-auto text-xs">
+            <button
+              onClick={() => setActiveWorkspaceTab('files')}
+              className={`px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shrink-0 ${
+                activeTab === 'files'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <FolderKanban className="w-4 h-4" />
+              <span>Files & Resources ({groupResources.length})</span>
+            </button>
 
-          <button
-            onClick={() => setActiveWorkspaceTab('sessions')}
-            className={`px-3.5 py-2 rounded-xl font-semibold flex items-center gap-1.5 transition shrink-0 ${
-              activeTab === 'sessions'
-                ? 'bg-sky-600 text-white shadow-xs font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Study Meetings ({groupEvents.length})</span>
-          </button>
+            <button
+              onClick={() => setActiveWorkspaceTab('tasks')}
+              className={`px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shrink-0 ${
+                activeTab === 'tasks'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <CheckSquare className="w-4 h-4" />
+              <span>Tasks & Activities ({groupTasks.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveWorkspaceTab('chat')}
+              className={`px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shrink-0 ${
+                activeTab === 'chat'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span>Team Discussion</span>
+            </button>
+
+            <button
+              onClick={() => setActiveWorkspaceTab('sessions')}
+              className={`px-3.5 py-2 rounded-xl font-bold flex items-center gap-1.5 transition shrink-0 ${
+                activeTab === 'sessions'
+                  ? 'bg-amber-500 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Study Meetings ({groupEvents.length})</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -428,12 +440,12 @@ export const WorkspaceView: React.FC = () => {
           {/* Kanban Columns */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* To Do */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <div className="bg-slate-50 border-2 border-slate-300 rounded-2xl p-4 shadow-xs">
+              <div className="flex items-center justify-between mb-3 bg-slate-700 text-white px-3 py-2 rounded-xl">
+                <span className="text-xs font-bold uppercase tracking-wider">
                   To Do ({groupTasks.filter(t => t.status === 'todo').length})
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-slate-300" />
               </div>
               <div className="space-y-2.5">
                 {groupTasks.filter(t => t.status === 'todo').map((task) => (
@@ -451,7 +463,7 @@ export const WorkspaceView: React.FC = () => {
                       <span>Due: {task.dueDate}</span>
                       <button
                         onClick={() => updateTaskStatus(task.id, 'in_progress')}
-                        className="text-sky-600 hover:underline font-semibold"
+                        className="text-sky-600 hover:underline font-bold"
                       >
                         Start &rarr;
                       </button>
@@ -462,30 +474,30 @@ export const WorkspaceView: React.FC = () => {
             </div>
 
             {/* In Progress */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-sky-800 uppercase tracking-wider">
+            <div className="bg-amber-50/60 border-2 border-amber-300 rounded-2xl p-4 shadow-xs">
+              <div className="flex items-center justify-between mb-3 bg-amber-500 text-white px-3 py-2 rounded-xl">
+                <span className="text-xs font-bold uppercase tracking-wider">
                   In Progress ({groupTasks.filter(t => t.status === 'in_progress').length})
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-white" />
               </div>
               <div className="space-y-2.5">
                 {groupTasks.filter(t => t.status === 'in_progress').map((task) => (
-                  <div key={task.id} className="bg-white border border-sky-200 rounded-xl p-3 shadow-xs">
+                  <div key={task.id} className="bg-white border-2 border-amber-200 rounded-xl p-3 shadow-xs">
                     <div className="flex items-start justify-between gap-1">
                       <h5 className="text-xs font-bold text-slate-900">{task.title}</h5>
                       <span className={`text-[9px] uppercase font-bold px-1.5 py-0.5 rounded ${
-                        task.priority === 'high' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-600'
+                        task.priority === 'high' ? 'bg-rose-100 text-rose-800' : 'bg-amber-100 text-amber-900'
                       }`}>
                         {task.priority}
                       </span>
                     </div>
-                    {task.description && <p className="text-[11px] text-slate-500 mt-1">{task.description}</p>}
-                    <div className="mt-3 flex items-center justify-between text-[10px] text-slate-400">
+                    {task.description && <p className="text-[11px] text-slate-600 mt-1">{task.description}</p>}
+                    <div className="mt-3 flex items-center justify-between text-[10px] text-slate-500">
                       <span>Assignee: {task.assigneeName}</span>
                       <button
                         onClick={() => updateTaskStatus(task.id, 'completed')}
-                        className="text-emerald-600 hover:underline font-semibold"
+                        className="text-emerald-700 hover:underline font-bold"
                       >
                         Complete &check;
                       </button>
@@ -496,24 +508,25 @@ export const WorkspaceView: React.FC = () => {
             </div>
 
             {/* Completed */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+            <div className="bg-emerald-50/60 border-2 border-emerald-300 rounded-2xl p-4 shadow-xs">
+              <div className="flex items-center justify-between mb-3 bg-emerald-600 text-white px-3 py-2 rounded-xl">
+                <span className="text-xs font-bold uppercase tracking-wider">
                   Completed ({groupTasks.filter(t => t.status === 'completed').length})
                 </span>
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                <span className="w-2.5 h-2.5 rounded-full bg-white" />
               </div>
               <div className="space-y-2.5">
                 {groupTasks.filter(t => t.status === 'completed').map((task) => (
-                  <div key={task.id} className="bg-white border border-slate-200 rounded-xl p-3 shadow-xs opacity-80">
-                    <h5 className="text-xs font-bold text-slate-700 line-through">{task.title}</h5>
-                    <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
-                      <span className="text-emerald-600 font-semibold flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> Done
+                  <div key={task.id} className="bg-white border-2 border-emerald-200 rounded-xl p-3 shadow-xs opacity-90">
+                    <h5 className="text-xs font-bold text-slate-800 line-through">{task.title}</h5>
+                    <div className="mt-2 flex items-center justify-between text-[10px] text-emerald-800 font-bold">
+                      <span className="flex items-center gap-1">
+                        <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Finished by {task.assigneeName}</span>
                       </span>
                       <button
                         onClick={() => updateTaskStatus(task.id, 'in_progress')}
-                        className="text-slate-400 hover:underline"
+                        className="text-slate-400 hover:text-slate-600 hover:underline"
                       >
                         Reopen
                       </button>

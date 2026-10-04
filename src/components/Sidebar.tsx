@@ -12,6 +12,7 @@ import {
   HelpCircle,
   ShieldCheck,
   Download,
+  Globe2,
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -30,13 +31,14 @@ export const Sidebar: React.FC = () => {
   ).length;
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-sky-600', activeBg: 'bg-sky-50 text-sky-900 border-sky-300' },
-    { id: 'discover', label: 'Discover Students', icon: Compass, color: 'text-purple-600', activeBg: 'bg-purple-50 text-purple-900 border-purple-300' },
-    { id: 'groups', label: 'Groups & Circles', icon: Users2, color: 'text-emerald-600', activeBg: 'bg-emerald-50 text-emerald-900 border-emerald-300' },
-    { id: 'workspace', label: 'Team Workspace', icon: FolderKanban, color: 'text-indigo-600', activeBg: 'bg-indigo-50 text-indigo-900 border-indigo-300' },
-    { id: 'messages', label: 'Secure Messages', icon: MessageSquareLock, color: 'text-rose-600', activeBg: 'bg-rose-50 text-rose-900 border-rose-300', badge: unreadMessagesCount },
-    { id: 'events', label: 'Events & Sessions', icon: CalendarDays, color: 'text-amber-600', activeBg: 'bg-amber-50 text-amber-900 border-amber-300' },
-    { id: 'profile', label: 'Profile & Privacy', icon: UserCheck, color: 'text-teal-600', activeBg: 'bg-teal-50 text-teal-900 border-teal-300' },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, color: 'text-sky-600', activeBg: 'bg-sky-600 text-white border-sky-600 shadow-sm' },
+    { id: 'discover', label: 'Discover Students', icon: Compass, color: 'text-purple-600', activeBg: 'bg-purple-600 text-white border-purple-600 shadow-sm' },
+    { id: 'groups', label: 'Groups & Circles', icon: Users2, color: 'text-emerald-600', activeBg: 'bg-emerald-600 text-white border-emerald-600 shadow-sm' },
+    { id: 'workspace', label: 'Team Workspace', icon: FolderKanban, color: 'text-indigo-600', activeBg: 'bg-indigo-600 text-white border-indigo-600 shadow-sm' },
+    { id: 'universities', label: 'Worldwide Campuses', icon: Globe2, color: 'text-teal-600', activeBg: 'bg-teal-600 text-white border-teal-600 shadow-sm', badgeText: '100+' },
+    { id: 'messages', label: 'Secure Messages', icon: MessageSquareLock, color: 'text-rose-600', activeBg: 'bg-rose-600 text-white border-rose-600 shadow-sm', badge: unreadMessagesCount },
+    { id: 'events', label: 'Events & Sessions', icon: CalendarDays, color: 'text-amber-600', activeBg: 'bg-amber-500 text-white border-amber-500 shadow-sm' },
+    { id: 'profile', label: 'Profile & Privacy', icon: UserCheck, color: 'text-teal-600', activeBg: 'bg-teal-600 text-white border-teal-600 shadow-sm' },
   ];
 
   return (
@@ -53,21 +55,29 @@ export const Sidebar: React.FC = () => {
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition border ${
                   isActive
-                    ? `${item.activeBg} font-bold shadow-xs`
-                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                    ? `${item.activeBg} font-bold`
+                    : 'border-transparent text-slate-700 hover:text-slate-950 hover:bg-slate-100/80'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                    isActive ? 'bg-white shadow-xs' : 'bg-slate-100'
+                    isActive ? 'bg-white/20 text-white' : 'bg-slate-100'
                   }`}>
-                    <Icon className={`w-4 h-4 ${isActive ? item.color : 'text-slate-500'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-white' : item.color}`} />
                   </div>
                   <span>{item.label}</span>
                 </div>
                 {item.badge ? (
-                  <span className="bg-rose-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                    isActive ? 'bg-white text-rose-600' : 'bg-rose-600 text-white'
+                  }`}>
                     {item.badge}
+                  </span>
+                ) : item.badgeText ? (
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-2xs ${
+                    isActive ? 'bg-white text-teal-800' : 'bg-teal-100 text-teal-800 border border-teal-300'
+                  }`}>
+                    {item.badgeText}
                   </span>
                 ) : null}
               </button>
@@ -83,16 +93,16 @@ export const Sidebar: React.FC = () => {
           <div className="space-y-2">
             <button
               onClick={() => setIsCreateGroupOpen(true)}
-              className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition shadow-xs"
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-xs"
             >
-              <PlusCircle className="w-4 h-4 text-emerald-600" />
+              <PlusCircle className="w-4 h-4 text-white" />
               <span>New Group or Team</span>
             </button>
             <button
               onClick={() => setIsCreateEventOpen(true)}
-              className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold text-sky-800 bg-sky-50 hover:bg-sky-100 border border-sky-200 transition shadow-xs"
+              className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 transition shadow-xs"
             >
-              <PlusCircle className="w-4 h-4 text-sky-600" />
+              <PlusCircle className="w-4 h-4 text-white" />
               <span>Schedule Session</span>
             </button>
           </div>

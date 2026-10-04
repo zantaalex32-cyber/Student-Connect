@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { GroupCategory } from '../types';
+import { WORLDWIDE_APPROVED_UNIVERSITIES, getUniversityByName } from '../data/universities';
 import { 
   Users2, 
   Plus, 
@@ -11,6 +12,7 @@ import {
   HeartHandshake, 
   Lock, 
   Globe, 
+  Globe2,
   FolderKanban, 
   Check, 
   ArrowRight,
@@ -70,98 +72,118 @@ export const GroupsView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Header Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-              Study Groups, Teams & Circles
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
-              Dedicated collaborative workspaces for coursework, capstone projects, career networks, and social friend circles.
-            </p>
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        {/* Top Colorful Brand Stripes */}
+        <div className="h-1.5 w-full flex">
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-amber-400" />
+        </div>
+
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                Study Groups, Teams & Circles
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-600 mt-0.5">
+                Dedicated collaborative workspaces for coursework, capstone projects, career networks, and social friend circles.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setIsCreateGroupOpen(true)}
+              className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center justify-center gap-1.5 shadow-xs shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create New Circle</span>
+            </button>
           </div>
 
-          <button
-            onClick={() => setIsCreateGroupOpen(true)}
-            className="px-4 py-2 text-xs font-semibold rounded-xl bg-sky-600 hover:bg-sky-700 text-white transition flex items-center justify-center gap-1.5 shadow-xs shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Create New Circle</span>
-          </button>
-        </div>
+          {/* Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-slate-100">
+            <button
+              onClick={() => setSelectedCategory('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                selectedCategory === 'all'
+                  ? 'bg-slate-900 text-white font-bold'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              All Communities ({groups.length})
+            </button>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-slate-100">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
-              selectedCategory === 'all'
-                ? 'bg-slate-900 text-white font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            All Communities ({groups.length})
-          </button>
+            <button
+              onClick={() => setSelectedCategory('study_group')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                selectedCategory === 'study_group'
+                  ? 'bg-emerald-600 text-white font-bold'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Study Groups</span>
+            </button>
 
-          <button
-            onClick={() => setSelectedCategory('study_group')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
-              selectedCategory === 'study_group'
-                ? 'bg-sky-600 text-white font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <BookOpen className="w-3.5 h-3.5" />
-            <span>Study Groups</span>
-          </button>
+            <button
+              onClick={() => setSelectedCategory('project_team')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                selectedCategory === 'project_team'
+                  ? 'bg-sky-600 text-white font-bold'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>Project Teams</span>
+            </button>
 
-          <button
-            onClick={() => setSelectedCategory('project_team')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
-              selectedCategory === 'project_team'
-                ? 'bg-emerald-600 text-white font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Briefcase className="w-3.5 h-3.5" />
-            <span>Project Teams</span>
-          </button>
+            <button
+              onClick={() => setSelectedCategory('networking_circle')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                selectedCategory === 'networking_circle'
+                  ? 'bg-purple-600 text-white font-bold'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <Network className="w-3.5 h-3.5" />
+              <span>Networking Circles</span>
+            </button>
 
-          <button
-            onClick={() => setSelectedCategory('networking_circle')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
-              selectedCategory === 'networking_circle'
-                ? 'bg-purple-600 text-white font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <Network className="w-3.5 h-3.5" />
-            <span>Networking Circles</span>
-          </button>
+            <button
+              onClick={() => setSelectedCategory('friend_group')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
+                selectedCategory === 'friend_group'
+                  ? 'bg-rose-600 text-white font-bold'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              <HeartHandshake className="w-3.5 h-3.5" />
+              <span>Friend Circles</span>
+            </button>
 
-          <button
-            onClick={() => setSelectedCategory('friend_group')}
-            className={`px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition ${
-              selectedCategory === 'friend_group'
-                ? 'bg-amber-600 text-white font-bold'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            <HeartHandshake className="w-3.5 h-3.5" />
-            <span>Friend Circles</span>
-          </button>
-        </div>
+            <button
+              onClick={() => setActiveTab('universities')}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-teal-50 text-teal-800 border border-teal-300 hover:bg-teal-100 flex items-center gap-1.5 shadow-2xs sm:ml-auto"
+              title="Explore approved worldwide universities"
+            >
+              <Globe2 className="w-3.5 h-3.5 text-teal-600" />
+              <span>Worldwide Campuses ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
+            </button>
+          </div>
 
-        {/* Search */}
-        <div className="mt-4 relative">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search communities by title, tags, or coursework..."
-            className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
-          />
+          {/* Search */}
+          <div className="mt-4 relative">
+            <Search className="w-4 h-4 text-emerald-600 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search communities by title, tags, or coursework..."
+              className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
         </div>
       </div>
 
@@ -238,9 +260,19 @@ export const GroupsView: React.FC = () => {
                             {group.category.replace('_', ' ')}
                           </span>
 
-                          <span className="text-[10px] text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded">
-                            {group.university}
-                          </span>
+                          {(() => {
+                            const approvedUni = getUniversityByName(group.university);
+                            return (
+                              <span className="text-[10px] text-slate-700 font-semibold bg-slate-100 border border-slate-200 px-2 py-0.5 rounded flex items-center gap-1">
+                                {approvedUni ? (
+                                  <span title={`${approvedUni.country} - Worldwide Approved`}>
+                                    {approvedUni.flag}
+                                  </span>
+                                ) : null}
+                                <span className="truncate">{group.university}</span>
+                              </span>
+                            );
+                          })()}
                         </div>
 
                         <h3 className="text-sm font-bold text-slate-900 mt-1.5 leading-snug">
@@ -270,7 +302,7 @@ export const GroupsView: React.FC = () => {
                   {group.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] bg-slate-50 text-slate-600 border border-slate-200 px-1.5 py-0.5 rounded font-medium"
+                      className="text-[10px] bg-slate-100 text-slate-800 border border-slate-200 px-2 py-0.5 rounded font-bold"
                     >
                       #{tag}
                     </span>
@@ -293,7 +325,7 @@ export const GroupsView: React.FC = () => {
                       />
                     ))}
                   </div>
-                  <span className="text-[11px] text-slate-500 font-medium">
+                  <span className="text-[11px] text-slate-600 font-bold">
                     {group.members.length} members
                   </span>
                 </div>
@@ -306,14 +338,14 @@ export const GroupsView: React.FC = () => {
                           setCurrentGroup(group);
                           setActiveTab('workspace');
                         }}
-                        className="px-3 py-1.5 text-xs font-semibold rounded-xl bg-sky-600 hover:bg-sky-700 text-white transition flex items-center gap-1 shadow-xs"
+                        className="px-3 py-1.5 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-700 text-white transition flex items-center gap-1 shadow-xs"
                       >
                         <FolderKanban className="w-3.5 h-3.5" />
                         <span>Workspace</span>
                       </button>
                       <button
                         onClick={() => leaveGroup(group.id)}
-                        className="px-2 py-1.5 text-xs text-slate-400 hover:text-rose-600 transition"
+                        className="px-2 py-1.5 text-xs font-semibold text-slate-500 hover:text-rose-600 transition"
                         title="Leave group"
                       >
                         Leave
@@ -322,7 +354,7 @@ export const GroupsView: React.FC = () => {
                   ) : (
                     <button
                       onClick={() => joinGroup(group.id)}
-                      className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 transition flex items-center gap-1"
+                      className="px-3.5 py-1.5 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1 shadow-xs"
                     >
                       <span>Join Community</span>
                     </button>

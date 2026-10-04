@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { WORLDWIDE_APPROVED_UNIVERSITIES } from '../data/universities';
 import { 
   BookOpen, 
   Users, 
@@ -17,7 +18,9 @@ import {
   FileText,
   UserPlus,
   Compass,
-  Check
+  Check,
+  Globe2,
+  School
 } from 'lucide-react';
 
 export const DashboardView: React.FC = () => {
@@ -67,79 +70,119 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Personalized Welcome Banner (Colorful Solid Badges, NO GRADIENTS) */}
-      <div className="bg-white border-2 border-slate-200 rounded-2xl p-6 shadow-xs relative overflow-hidden">
-        {/* Decorative solid color corner tag */}
-        <div className="absolute top-0 right-0 w-24 h-2 bg-sky-500" />
-        
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-16 h-16 rounded-2xl object-cover border-2 border-sky-400"
-              />
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full" title="Online" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
-                  Welcome, {currentUser.name.split(' ')[0]}
-                </h1>
-                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full border border-sky-300">
-                  <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-                  Verified Campus Student
-                </span>
-              </div>
-              <p className="text-xs sm:text-sm text-slate-700 mt-1 font-medium">
-                {currentUser.course} &bull; {currentUser.yearOfStudy} at <strong className="text-sky-900">{currentUser.university}</strong>
-              </p>
-            </div>
-          </div>
-
-          {/* Quick Action Buttons */}
-          <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
-            <button
-              onClick={() => setIsCreateEventOpen(true)}
-              className="px-4 py-2 text-xs font-bold rounded-xl bg-sky-600 hover:bg-sky-700 text-white transition shadow-xs flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Schedule Session</span>
-            </button>
-            <button
-              onClick={() => setIsCreateGroupOpen(true)}
-              className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-xs flex items-center gap-1.5"
-            >
-              <Users className="w-4 h-4" />
-              <span>Create Circle</span>
-            </button>
-          </div>
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs relative overflow-hidden">
+        {/* Top Colorful Brand Stripes (Solid colors matching logo, strictly NO gradients) */}
+        <div className="h-2 w-full flex">
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-amber-400" />
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-indigo-600" />
         </div>
+        
+        <div className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-16 h-16 rounded-2xl object-cover ring-4 ring-sky-200 border-2 border-white"
+                />
+                <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-xs" title="Online" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-xl sm:text-2xl font-bold text-slate-900">
+                    Welcome, {currentUser.name.split(' ')[0]}
+                  </h1>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-emerald-600 px-2.5 py-0.5 rounded-full shadow-xs">
+                    <ShieldCheck className="w-3.5 h-3.5 text-white" />
+                    Verified Campus Student
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 mt-1 font-medium flex items-center gap-1.5 flex-wrap">
+                  <span>{currentUser.course} &bull; {currentUser.yearOfStudy} at</span>
+                  <span className="bg-sky-100 text-sky-900 font-bold px-2 py-0.5 rounded-md border border-sky-300">
+                    {currentUser.university}
+                  </span>
+                </p>
+              </div>
+            </div>
 
-        {/* Colorful Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-100">
-          <div className="bg-sky-50 border border-sky-200 rounded-xl p-3.5">
-            <span className="text-[11px] text-sky-800 font-bold uppercase tracking-wider block">Active Workspaces</span>
-            <span className="text-xl font-extrabold text-sky-950 mt-0.5 block">{myGroups.length}</span>
+            {/* Quick Action Buttons */}
+            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+              <button
+                onClick={() => setActiveTab('universities')}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-teal-600 hover:bg-teal-700 text-white transition shadow-xs flex items-center gap-1.5"
+                title="Browse worldwide approved universities"
+              >
+                <Globe2 className="w-4 h-4 text-white" />
+                <span>Worldwide Campuses ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
+              </button>
+              <button
+                onClick={() => setIsCreateEventOpen(true)}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition shadow-xs flex items-center gap-1.5"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Schedule Session</span>
+              </button>
+              <button
+                onClick={() => setIsCreateGroupOpen(true)}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-xs flex items-center gap-1.5"
+              >
+                <Users className="w-4 h-4" />
+                <span>Create Circle</span>
+              </button>
+            </div>
           </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3.5">
-            <span className="text-[11px] text-amber-800 font-bold uppercase tracking-wider block">Upcoming Sessions</span>
-            <span className="text-xl font-extrabold text-amber-950 mt-0.5 block">{events.length}</span>
-          </div>
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
-            <span className="text-[11px] text-emerald-800 font-bold uppercase tracking-wider block">Shared Resources</span>
-            <span className="text-xl font-extrabold text-emerald-950 mt-0.5 block">{resources.length} files</span>
-          </div>
-          <div className="bg-purple-50 border border-purple-200 rounded-xl p-3.5">
-            <span className="text-[11px] text-purple-800 font-bold uppercase tracking-wider block">Campus Peers</span>
-            <span className="text-xl font-extrabold text-purple-950 mt-0.5 block">{users.length} students</span>
+
+          {/* Colorful Quick Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-slate-100">
+            <div className="bg-sky-50 border-2 border-sky-300 rounded-xl p-3.5 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+                <FolderKanban className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-sky-800 font-extrabold uppercase tracking-wider block">Workspaces</span>
+                <span className="text-xl font-black text-sky-950 leading-tight">{myGroups.length}</span>
+              </div>
+            </div>
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-3.5 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+                <Calendar className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-amber-800 font-extrabold uppercase tracking-wider block">Sessions</span>
+                <span className="text-xl font-black text-amber-950 leading-tight">{events.length}</span>
+              </div>
+            </div>
+            <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-3.5 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-emerald-800 font-extrabold uppercase tracking-wider block">Resources</span>
+                <span className="text-xl font-black text-emerald-950 leading-tight">{resources.length}</span>
+              </div>
+            </div>
+            <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-3.5 flex items-center gap-3 shadow-xs">
+              <div className="w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold shrink-0 shadow-xs">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] text-purple-800 font-extrabold uppercase tracking-wider block">Peers</span>
+                <span className="text-xl font-black text-purple-950 leading-tight">{users.length}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Fresh Account Welcoming Onboarding Cards (when empty) */}
       {isDashboardEmpty && (
-        <div className="bg-white border-2 border-sky-200 rounded-2xl p-6 shadow-xs">
+        <div className="bg-white border-2 border-sky-300 rounded-2xl p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
               <div className="flex items-center gap-2">
@@ -152,69 +195,69 @@ export const DashboardView: React.FC = () => {
             </div>
             <button
               onClick={loadSampleData}
-              className="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200 transition shrink-0 flex items-center gap-1.5"
+              className="px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 transition shrink-0 flex items-center gap-1.5 shadow-xs"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-950" />
               <span>Load Starter University Demo Data</span>
             </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             {/* Step 1: Create or join group */}
-            <div className="bg-emerald-50 border border-emerald-300 rounded-xl p-4.5 flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold mb-3 shadow-xs">
-                  <BookOpen className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-emerald-950">1. Study Groups & Teams</h3>
-                <p className="text-[11px] text-emerald-800 mt-1 leading-relaxed">
+            <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl overflow-hidden flex flex-col justify-between shadow-xs">
+              <div className="bg-emerald-600 text-white p-3 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider">1. Study Groups & Teams</span>
+                <BookOpen className="w-4 h-4 text-emerald-100" />
+              </div>
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <p className="text-xs text-emerald-950 leading-relaxed font-medium">
                   Create a dedicated workspace for exam revision, capstone projects, or social friend circles.
                 </p>
+                <button
+                  onClick={() => setIsCreateGroupOpen(true)}
+                  className="mt-4 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                >
+                  Create First Group
+                </button>
               </div>
-              <button
-                onClick={() => setIsCreateGroupOpen(true)}
-                className="mt-4 w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
-              >
-                Create First Group
-              </button>
             </div>
 
             {/* Step 2: Discover Peers */}
-            <div className="bg-sky-50 border border-sky-300 rounded-xl p-4.5 flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold mb-3 shadow-xs">
-                  <Compass className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-sky-950">2. Discover Study Partners</h3>
-                <p className="text-[11px] text-sky-800 mt-1 leading-relaxed">
+            <div className="bg-sky-50 border-2 border-sky-300 rounded-xl overflow-hidden flex flex-col justify-between shadow-xs">
+              <div className="bg-sky-600 text-white p-3 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider">2. Discover Study Partners</span>
+                <Compass className="w-4 h-4 text-sky-100" />
+              </div>
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <p className="text-xs text-sky-950 leading-relaxed font-medium">
                   Find students from {currentUser.university} or across universities matching your courses and skills.
                 </p>
+                <button
+                  onClick={() => setActiveTab('discover')}
+                  className="mt-4 w-full py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                >
+                  Find Students
+                </button>
               </div>
-              <button
-                onClick={() => setActiveTab('discover')}
-                className="mt-4 w-full py-2 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
-              >
-                Find Students
-              </button>
             </div>
 
             {/* Step 3: Schedule Session */}
-            <div className="bg-amber-50 border border-amber-300 rounded-xl p-4.5 flex flex-col justify-between">
-              <div>
-                <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold mb-3 shadow-xs">
-                  <Calendar className="w-5 h-5" />
-                </div>
-                <h3 className="text-xs font-bold text-amber-950">3. Schedule a Session</h3>
-                <p className="text-[11px] text-amber-800 mt-1 leading-relaxed">
+            <div className="bg-amber-50 border-2 border-amber-300 rounded-xl overflow-hidden flex flex-col justify-between shadow-xs">
+              <div className="bg-amber-500 text-white p-3 flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider">3. Schedule a Session</span>
+                <Calendar className="w-4 h-4 text-amber-100" />
+              </div>
+              <div className="p-4 flex-1 flex flex-col justify-between">
+                <p className="text-xs text-amber-950 leading-relaxed font-medium">
                   Set up a library study pod session, workshop, or weekend board game night with RSVP and reminders.
                 </p>
+                <button
+                  onClick={() => setIsCreateEventOpen(true)}
+                  className="mt-4 w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                >
+                  Schedule Session
+                </button>
               </div>
-              <button
-                onClick={() => setIsCreateEventOpen(true)}
-                className="mt-4 w-full py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-lg transition shadow-xs"
-              >
-                Schedule Session
-              </button>
             </div>
           </div>
         </div>
@@ -259,33 +302,60 @@ export const DashboardView: React.FC = () => {
                   const eventDate = new Date(ev.dateTime);
                   const isGoing = ev.attendees.some(a => a.userId === currentUser.id && a.status === 'going');
 
+                  const categoryColors: Record<string, { tile: string; badge: string; border: string }> = {
+                    study_session: { tile: 'bg-sky-600 text-white', badge: 'bg-sky-100 text-sky-800', border: 'border-l-sky-500' },
+                    workshop: { tile: 'bg-indigo-600 text-white', badge: 'bg-indigo-100 text-indigo-800', border: 'border-l-indigo-500' },
+                    seminar: { tile: 'bg-purple-600 text-white', badge: 'bg-purple-100 text-purple-800', border: 'border-l-purple-500' },
+                    project_meeting: { tile: 'bg-emerald-600 text-white', badge: 'bg-emerald-100 text-emerald-800', border: 'border-l-emerald-500' },
+                    academic_event: { tile: 'bg-blue-600 text-white', badge: 'bg-blue-100 text-blue-800', border: 'border-l-blue-500' },
+                    social_meetup: { tile: 'bg-amber-500 text-white', badge: 'bg-amber-100 text-amber-800', border: 'border-l-amber-500' },
+                    hangout: { tile: 'bg-amber-500 text-white', badge: 'bg-amber-100 text-amber-800', border: 'border-l-amber-500' },
+                    game_night: { tile: 'bg-rose-600 text-white', badge: 'bg-rose-100 text-rose-800', border: 'border-l-rose-500' },
+                    sports: { tile: 'bg-teal-600 text-white', badge: 'bg-teal-100 text-teal-800', border: 'border-l-teal-500' },
+                    trip: { tile: 'bg-orange-500 text-white', badge: 'bg-orange-100 text-orange-800', border: 'border-l-orange-500' },
+                    birthday: { tile: 'bg-pink-600 text-white', badge: 'bg-pink-100 text-pink-800', border: 'border-l-pink-500' },
+                  };
+
+                  const theme = categoryColors[ev.category] || { tile: 'bg-slate-700 text-white', badge: 'bg-slate-100 text-slate-800', border: 'border-l-slate-400' };
+
                   return (
                     <div
                       key={ev.id}
-                      className="p-4 rounded-xl border border-slate-200 hover:border-sky-300 transition bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-l-4 border-l-sky-500"
+                      className={`p-4 rounded-xl border-2 border-slate-200 hover:border-sky-300 transition bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-l-4 ${theme.border} shadow-xs`}
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-sky-100 text-sky-800">
-                            {ev.category.replace('_', ' ')}
+                      <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                        {/* Solid Colorful Date Square */}
+                        <div className={`w-12 h-12 rounded-xl flex flex-col items-center justify-center shrink-0 shadow-xs ${theme.tile}`}>
+                          <span className="text-[10px] font-black uppercase tracking-wider leading-none">
+                            {eventDate.toLocaleDateString(undefined, { month: 'short' })}
                           </span>
-                          {ev.groupName && (
-                            <span className="text-[11px] text-slate-500 truncate max-w-[200px]">
-                              {ev.groupName}
-                            </span>
-                          )}
+                          <span className="text-base font-black leading-tight mt-0.5">
+                            {eventDate.getDate()}
+                          </span>
                         </div>
-                        <h3 className="text-sm font-bold text-slate-900 leading-snug">{ev.title}</h3>
-                        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 pt-0.5">
-                          <span className="flex items-center gap-1 font-medium text-slate-700">
-                            <Clock className="w-3.5 h-3.5 text-sky-600" />
-                            {eventDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at{' '}
-                            {eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3.5 h-3.5 text-amber-500" />
-                            {ev.locationDetails}
-                          </span>
+
+                        <div className="space-y-1 min-w-0 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded ${theme.badge}`}>
+                              {ev.category.replace('_', ' ')}
+                            </span>
+                            {ev.groupName && (
+                              <span className="text-[11px] font-medium text-slate-500 truncate">
+                                {ev.groupName}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-sm font-bold text-slate-900 leading-snug">{ev.title}</h3>
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 pt-0.5">
+                            <span className="flex items-center gap-1 font-medium text-slate-700">
+                              <Clock className="w-3.5 h-3.5 text-sky-600" />
+                              {eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ({ev.duration})
+                            </span>
+                            <span className="flex items-center gap-1 font-medium text-slate-600">
+                              <MapPin className="w-3.5 h-3.5 text-amber-500" />
+                              {ev.locationDetails}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
@@ -294,8 +364,8 @@ export const DashboardView: React.FC = () => {
                           onClick={() => toggleRSVP(ev.id, isGoing ? 'cant_go' : 'going')}
                           className={`px-3 py-1.5 text-xs font-bold rounded-lg transition ${
                             isGoing
-                              ? 'bg-emerald-600 text-white hover:bg-emerald-700'
-                              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                              ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs'
+                              : 'bg-slate-100 border border-slate-300 text-slate-700 hover:bg-slate-200'
                           }`}
                         >
                           {isGoing ? '✓ Attending' : 'RSVP Going'}
@@ -444,21 +514,21 @@ export const DashboardView: React.FC = () => {
                           setSelectedChatId(`dm-${user.id}`);
                           setActiveTab('messages');
                         }}
-                        className="flex-1 py-1.5 text-center text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg transition"
+                        className="flex-1 py-1.5 text-center text-xs font-bold text-slate-800 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition"
                       >
                         Message
                       </button>
 
                       {connStatus === 'connected' ? (
-                        <span className="text-[11px] font-bold text-emerald-700 px-2 flex items-center gap-1">
-                          <Check className="w-3 h-3" /> Connected
+                        <span className="text-[11px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-300 flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5 text-emerald-600" /> Connected
                         </span>
                       ) : connStatus === 'pending_sent' ? (
-                        <span className="text-[11px] font-semibold text-slate-500 px-2">Pending</span>
+                        <span className="text-[11px] font-bold text-amber-900 bg-amber-100 px-2.5 py-1 rounded-lg border border-amber-300">Pending</span>
                       ) : (
                         <button
                           onClick={() => requestConnection(user.id)}
-                          className="flex-1 py-1.5 text-center text-xs font-bold text-sky-700 bg-sky-100 hover:bg-sky-200 border border-sky-300 rounded-lg transition"
+                          className="flex-1 py-1.5 text-center text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-lg transition shadow-xs"
                         >
                           Connect
                         </button>
@@ -467,6 +537,74 @@ export const DashboardView: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Worldwide Approved Universities Directory Spotlight Card */}
+          <div className="bg-white border-2 border-teal-300 rounded-2xl p-5 shadow-xs overflow-hidden relative">
+            <div className="h-1.5 w-full -mt-5 -mx-5 mb-4 flex">
+              <div className="flex-1 bg-teal-500" />
+              <div className="flex-1 bg-sky-500" />
+              <div className="flex-1 bg-amber-400" />
+              <div className="flex-1 bg-emerald-500" />
+              <div className="flex-1 bg-purple-600" />
+            </div>
+
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-xl bg-teal-600 text-white flex items-center justify-center shadow-xs">
+                  <Globe2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-teal-900">
+                    Worldwide Approved Campuses
+                  </h3>
+                  <span className="text-[10px] text-slate-500 font-semibold">
+                    {WORLDWIDE_APPROVED_UNIVERSITIES.length}+ Higher Education Institutions
+                  </span>
+                </div>
+              </div>
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded border border-emerald-300">
+                Accredited
+              </span>
+            </div>
+
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Degree-granting universities across Europe, North America, Asia, Africa, Oceania, and Latin America with verified student access.
+            </p>
+
+            <div className="mt-3.5 flex flex-wrap gap-1.5">
+              <span className="text-[10px] bg-sky-50 text-sky-800 font-bold px-2 py-0.5 rounded border border-sky-200">
+                UK & Europe
+              </span>
+              <span className="text-[10px] bg-purple-50 text-purple-800 font-bold px-2 py-0.5 rounded border border-purple-200">
+                North America
+              </span>
+              <span className="text-[10px] bg-amber-50 text-amber-900 font-bold px-2 py-0.5 rounded border border-amber-200">
+                Asia & Mideast
+              </span>
+              <span className="text-[10px] bg-emerald-50 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200">
+                Africa
+              </span>
+              <span className="text-[10px] bg-teal-50 text-teal-800 font-bold px-2 py-0.5 rounded border border-teal-200">
+                Oceania
+              </span>
+              <span className="text-[10px] bg-rose-50 text-rose-800 font-bold px-2 py-0.5 rounded border border-rose-200">
+                Latin America
+              </span>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <span className="text-[11px] text-slate-500 font-medium">
+                Your campus: <strong className="text-slate-900">{currentUser.university.split(' ')[0]}</strong>
+              </span>
+              <button
+                onClick={() => setActiveTab('universities')}
+                className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center gap-1"
+              >
+                <span>Directory</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
 

@@ -608,22 +608,16 @@ export const INITIAL_NOTIFICATIONS: NotificationItem[] = [
   }
 ];
 
-export const UNIVERSITIES_LIST = [
-  'Imperial College London',
-  'University of Oxford',
-  'University of Cambridge',
-  'University College London (UCL)',
-  'London School of Economics (LSE)',
-  'University of Edinburgh',
-  'King’s College London',
-  'University of Manchester',
-  'University of Toronto',
-  'University of Nairobi',
-  'Stanford University',
-  'MIT',
-  'Harvard University',
-  'University of Melbourne'
-];
+export { 
+  UNIVERSITIES_LIST,
+  WORLDWIDE_APPROVED_UNIVERSITIES,
+  WORLDWIDE_REGIONS,
+  WORLDWIDE_UNIVERSITIES_NAMES,
+  getUniversityByName,
+  searchWorldwideUniversities,
+  type ApprovedUniversity,
+  type WorldwideRegion
+} from './universities';
 
 export const STUDY_YEARS = [
   'Year 1',

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { ProfileVisibility, YearOfStudy } from '../types';
-import { STUDY_YEARS, UNIVERSITIES_LIST } from '../data/mockData';
+import { STUDY_YEARS, getUniversityByName } from '../data/mockData';
+import { WORLDWIDE_APPROVED_UNIVERSITIES } from '../data/universities';
+import { UniversitySelectPicker } from '../components/UniversitySelectPicker';
 import { 
   User, 
   ShieldCheck, 
@@ -16,7 +18,8 @@ import {
   Trash2, 
   MessageCircle, 
   Shield, 
-  ExternalLink 
+  ExternalLink,
+  Globe2
 } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
@@ -25,7 +28,9 @@ export const ProfileView: React.FC = () => {
     users,
     updateUserProfile,
     unblockUser,
+    setActiveTab,
     setIsWhatsAppSupportOpen,
+    setIsWorldwideUniModalOpen,
   } = useApp();
 
   const [name, setName] = useState(currentUser.name);
@@ -83,44 +88,85 @@ export const ProfileView: React.FC = () => {
     .map(id => users.find(u => u.id === id))
     .filter(Boolean);
 
+  const currentApprovedUni = getUniversityByName(currentUser.university);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
       {/* Header Profile Banner */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-          <img
-            src={currentUser.avatar}
-            alt={currentUser.name}
-            className="w-16 h-16 rounded-2xl object-cover border-2 border-sky-200 shadow-xs"
-          />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-slate-900">{currentUser.name}</h1>
-              <span className="text-xs bg-sky-100 text-sky-800 font-semibold px-2 py-0.5 rounded-full flex items-center gap-1 border border-sky-200">
-                <ShieldCheck className="w-3.5 h-3.5 text-sky-600" />
-                Verified Student
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 mt-0.5">{currentUser.course} &bull; {currentUser.yearOfStudy}</p>
-            <p className="text-xs text-slate-500">{currentUser.university}</p>
-          </div>
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        {/* Top Colorful Brand Stripes */}
+        <div className="h-2 w-full flex">
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-amber-400" />
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-indigo-600" />
+        </div>
 
-          <button
-            onClick={() => setIsWhatsAppSupportOpen(true)}
-            className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition flex items-center gap-1.5 self-start sm:self-auto shrink-0"
-          >
-            <MessageCircle className="w-4 h-4 text-emerald-600" />
-            <span>Campus Ambassador (0114488963)</span>
-          </button>
+        <div className="p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="relative">
+              <img
+                src={currentUser.avatar}
+                alt={currentUser.name}
+                className="w-16 h-16 rounded-2xl object-cover ring-4 ring-sky-200 border-2 border-white shadow-xs"
+              />
+              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-xs" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-xl font-bold text-slate-900">{currentUser.name}</h1>
+                <span className="text-xs bg-emerald-600 text-white font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-white" />
+                  Verified Student
+                </span>
+              </div>
+              <p className="text-xs text-slate-700 mt-0.5 font-medium">{currentUser.course} &bull; {currentUser.yearOfStudy}</p>
+              
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span className="text-xs text-sky-950 font-bold bg-sky-100 border border-sky-300 px-2.5 py-0.5 rounded-lg flex items-center gap-1.5 shadow-2xs">
+                  {currentApprovedUni ? <span>{currentApprovedUni.flag}</span> : <School className="w-3.5 h-3.5 text-sky-700" />}
+                  <span>{currentUser.university}</span>
+                </span>
+                {currentApprovedUni && (
+                  <span className="text-[10px] text-emerald-900 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md font-bold flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                    Accredited Worldwide ({currentApprovedUni.country})
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsWhatsAppSupportOpen(true)}
+              className="px-3.5 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition flex items-center gap-1.5 self-start sm:self-auto shrink-0 shadow-xs"
+            >
+              <MessageCircle className="w-4 h-4 text-white" />
+              <span>Campus Ambassador (0114488963)</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Profile Settings Form */}
       <form onSubmit={handleSave} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-6">
         <div>
-          <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2 mb-4">
-            Academic Profile Information
-          </h2>
+          <div className="flex items-center justify-between border-b border-slate-100 pb-2 mb-4">
+            <h2 className="text-sm font-bold text-slate-900">
+              Academic Profile Information
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setActiveTab('universities')}
+                className="text-xs text-teal-800 hover:text-teal-950 font-bold flex items-center gap-1.5 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-300 transition shadow-2xs"
+              >
+                <Globe2 className="w-3.5 h-3.5 text-teal-600" />
+                <span>Worldwide Campuses ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
+              </button>
+            </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -135,18 +181,23 @@ export const ProfileView: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">University / College</label>
-              <select
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-slate-700">Worldwide Approved University</label>
+                <button
+                  type="button"
+                  onClick={() => setIsWorldwideUniModalOpen(true)}
+                  className="text-[11px] text-indigo-700 hover:text-indigo-900 font-bold flex items-center gap-1"
+                >
+                  <Globe2 className="w-3 h-3" />
+                  <span>Browse All</span>
+                </button>
+              </div>
+              <UniversitySelectPicker
                 value={university}
-                onChange={(e) => setUniversity(e.target.value)}
-                className="w-full text-xs rounded-xl border border-slate-200 p-2.5 bg-slate-50 text-slate-900 focus:outline-none focus:ring-1 focus:ring-sky-500"
-              >
-                {UNIVERSITIES_LIST.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
+                onChange={setUniversity}
+                label=""
+                placeholder="Select worldwide approved university..."
+              />
             </div>
 
             <div>

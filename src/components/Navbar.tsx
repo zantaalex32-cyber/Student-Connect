@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Logo } from './Logo';
 import { PWAInstallPrompt } from './PWAInstallPrompt';
+import { WORLDWIDE_APPROVED_UNIVERSITIES } from '../data/universities';
 import { 
   Bell, 
   Search, 
   School, 
   Globe, 
+  Globe2,
   MessageCircle, 
   Check, 
   ShieldCheck, 
@@ -32,12 +34,14 @@ export const Navbar: React.FC = () => {
     setFilterUniversityOnly,
     searchQuery,
     setSearchQuery,
+    activeTab,
     setActiveTab,
     setIsWhatsAppSupportOpen,
     requestBrowserPushPermission,
     pushPermissionState,
     clearAllData,
     loadSampleData,
+    setIsWorldwideUniModalOpen,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -49,12 +53,13 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
       {/* Top Colorful Brand Stripes (Solid colors matching logo, strictly NO gradients) */}
-      <div className="h-1 w-full flex">
+      <div className="h-1.5 w-full flex">
         <div className="flex-1 bg-sky-500" />
         <div className="flex-1 bg-emerald-500" />
         <div className="flex-1 bg-amber-400" />
         <div className="flex-1 bg-rose-500" />
-        <div className="flex-1 bg-purple-500" />
+        <div className="flex-1 bg-purple-600" />
+        <div className="flex-1 bg-indigo-600" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
@@ -71,10 +76,10 @@ export const Navbar: React.FC = () => {
           <div className="hidden lg:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
             <button
               onClick={() => setFilterUniversityOnly(true)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
                 filterUniversityOnly
-                  ? 'bg-sky-600 text-white shadow-xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <School className={`w-3.5 h-3.5 ${filterUniversityOnly ? 'text-white' : 'text-sky-600'}`} />
@@ -82,14 +87,26 @@ export const Navbar: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterUniversityOnly(false)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
                 !filterUniversityOnly
-                  ? 'bg-indigo-600 text-white shadow-xs font-semibold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <Globe className={`w-3.5 h-3.5 ${!filterUniversityOnly ? 'text-white' : 'text-slate-500'}`} />
+              <Globe className={`w-3.5 h-3.5 ${!filterUniversityOnly ? 'text-white' : 'text-indigo-600'}`} />
               <span>Global Academic</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('universities')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition shadow-xs ${
+                activeTab === 'universities'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-300'
+              }`}
+              title="Explore accredited universities worldwide"
+            >
+              <Globe2 className={`w-3.5 h-3.5 ${activeTab === 'universities' ? 'text-white' : 'text-teal-600'}`} />
+              <span>Worldwide Approved ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
             </button>
           </div>
         </div>
@@ -97,13 +114,13 @@ export const Navbar: React.FC = () => {
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 max-w-md mx-2">
           <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-sky-600 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search students, study groups, courses, skills, events..."
-              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 focus:bg-white transition"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white transition"
             />
             {searchQuery && (
               <button
@@ -123,18 +140,18 @@ export const Navbar: React.FC = () => {
             <button
               onClick={loadSampleData}
               title="Populate app with starter university groups and events"
-              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-lg bg-amber-50 text-amber-800 border border-amber-300 hover:bg-amber-100 transition shadow-xs"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 transition shadow-xs"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-950" />
               <span>Load Starter Data</span>
             </button>
           ) : (
             <button
               onClick={clearAllData}
               title="Reset all data to empty clean slate"
-              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 hover:text-rose-600 transition"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 border border-slate-200 transition"
             >
-              <RotateCcw className="w-3.5 h-3.5 text-slate-400" />
+              <RotateCcw className="w-3.5 h-3.5 text-slate-500" />
               <span>Empty Slate</span>
             </button>
           )}
@@ -146,9 +163,9 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setIsWhatsAppSupportOpen(true)}
             title="Campus Support Hotline on WhatsApp"
-            className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg text-emerald-800 bg-emerald-100 hover:bg-emerald-200 border border-emerald-300 transition"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-xs"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+            <MessageCircle className="w-3.5 h-3.5 text-white" />
             <span>Support</span>
           </button>
 
@@ -156,12 +173,12 @@ export const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition"
+              className="relative p-2 text-slate-700 hover:text-sky-700 hover:bg-sky-50 rounded-xl transition"
               aria-label="Notifications"
             >
-              <Bell className="w-5 h-5 text-slate-700" />
+              <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                <span className="absolute top-1 right-1 w-4 h-4 bg-rose-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse shadow-xs">
                   {unreadCount}
                 </span>
               )}
@@ -231,14 +248,17 @@ export const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
-              className="flex items-center gap-2 p-1 pl-2 pr-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition"
+              className="flex items-center gap-2 p-1 pl-2 pr-2.5 rounded-xl border border-slate-200 hover:border-sky-300 hover:bg-sky-50/50 transition"
             >
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-7 h-7 rounded-lg object-cover border border-slate-300"
-              />
-              <span className="hidden sm:block text-xs font-semibold text-slate-800 text-left leading-tight">
+              <div className="relative">
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-7 h-7 rounded-lg object-cover ring-2 ring-emerald-500"
+                />
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-white" />
+              </div>
+              <span className="hidden sm:block text-xs font-bold text-slate-800 text-left leading-tight">
                 {currentUser.name}
               </span>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -302,6 +322,16 @@ export const Navbar: React.FC = () => {
                     className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg transition"
                   >
                     View & Edit Student Profile
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsWorldwideUniModalOpen(true);
+                      setShowUserMenu(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-xs font-medium text-indigo-700 hover:bg-indigo-50 rounded-lg transition flex items-center justify-between"
+                  >
+                    <span>Worldwide Approved Universities</span>
+                    <span className="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-bold">80+ Campuses</span>
                   </button>
                   <button
                     onClick={() => {

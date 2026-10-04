@@ -11,15 +11,23 @@ import { WorkspaceView } from './views/WorkspaceView';
 import { MessagesView } from './views/MessagesView';
 import { EventsView } from './views/EventsView';
 import { ProfileView } from './views/ProfileView';
+import { UniversitiesView } from './views/UniversitiesView';
 
 import { CreateGroupModal } from './components/CreateGroupModal';
 import { CreateEventModal } from './components/CreateEventModal';
 import { UploadResourceModal } from './components/UploadResourceModal';
 import { WhatsAppSupportModal } from './components/WhatsAppSupportModal';
 import { ReportModal } from './components/ReportModal';
+import { WorldwideUniversitiesModal } from './components/WorldwideUniversitiesModal';
 
 const AppContent: React.FC = () => {
-  const { activeTab, isWhatsAppSupportOpen, setIsWhatsAppSupportOpen } = useApp();
+  const { 
+    activeTab, 
+    isWhatsAppSupportOpen, 
+    setIsWhatsAppSupportOpen,
+    isWorldwideUniModalOpen,
+    setIsWorldwideUniModalOpen,
+  } = useApp();
 
   const renderActiveView = () => {
     switch (activeTab) {
@@ -37,6 +45,8 @@ const AppContent: React.FC = () => {
         return <EventsView />;
       case 'profile':
         return <ProfileView />;
+      case 'universities':
+        return <UniversitiesView />;
       default:
         return <DashboardView />;
     }
@@ -72,6 +82,10 @@ const AppContent: React.FC = () => {
       <WhatsAppSupportModal
         isOpen={isWhatsAppSupportOpen}
         onClose={() => setIsWhatsAppSupportOpen(false)}
+      />
+      <WorldwideUniversitiesModal
+        isOpen={isWorldwideUniModalOpen}
+        onClose={() => setIsWorldwideUniModalOpen(false)}
       />
     </div>
   );

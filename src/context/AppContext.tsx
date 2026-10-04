@@ -52,6 +52,8 @@ interface AppContextType {
   setIsE2EEModalOpen: (open: boolean) => void;
   isWhatsAppSupportOpen: boolean;
   setIsWhatsAppSupportOpen: (open: boolean) => void;
+  isWorldwideUniModalOpen: boolean;
+  setIsWorldwideUniModalOpen: (open: boolean) => void;
   isReportModalOpen: boolean;
   setIsReportModalOpen: (open: boolean) => void;
   reportTarget: { type: 'user' | 'group' | 'message'; id: string; name: string } | null;
@@ -167,6 +169,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isUploadResourceOpen, setIsUploadResourceOpen] = useState(false);
   const [isE2EEModalOpen, setIsE2EEModalOpen] = useState(false);
   const [isWhatsAppSupportOpen, setIsWhatsAppSupportOpen] = useState(false);
+  const [isWorldwideUniModalOpen, setIsWorldwideUniModalOpen] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportTarget, setReportTarget] = useState<{ type: 'user' | 'group' | 'message'; id: string; name: string } | null>(null);
 
@@ -740,6 +743,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsE2EEModalOpen,
         isWhatsAppSupportOpen,
         setIsWhatsAppSupportOpen,
+        isWorldwideUniModalOpen,
+        setIsWorldwideUniModalOpen,
         isReportModalOpen,
         setIsReportModalOpen,
         reportTarget,
