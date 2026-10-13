@@ -90,7 +90,16 @@ export const DiscoverView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-12">
       {/* Header and Controls */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
+      <div className="bg-white border-2 border-slate-200 rounded-2xl shadow-xs overflow-hidden">
+        {/* Top Colorful Brand Stripes */}
+        <div className="h-1.5 w-full flex">
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-amber-400" />
+          <div className="flex-1 bg-rose-500" />
+        </div>
+        
         <div className="p-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
@@ -106,9 +115,9 @@ export const DiscoverView: React.FC = () => {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setFilterUniversityOnly(false)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                   !filterUniversityOnly
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    ? 'bg-purple-600 text-white shadow-xs'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
@@ -116,9 +125,9 @@ export const DiscoverView: React.FC = () => {
               </button>
               <button
                 onClick={() => setFilterUniversityOnly(true)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition ${
                   filterUniversityOnly
-                    ? 'bg-sky-600 text-white font-bold shadow-xs'
+                    ? 'bg-sky-600 text-white shadow-xs'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                 }`}
               >
@@ -126,11 +135,11 @@ export const DiscoverView: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveTab('universities')}
-                className="px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 flex items-center gap-1.5 shadow-2xs"
+                className="px-3 py-1.5 rounded-xl text-xs font-bold transition bg-teal-50 text-teal-800 border border-teal-300 hover:bg-teal-100 flex items-center gap-1.5 shadow-2xs"
                 title="Browse approved worldwide universities"
               >
-                <Globe2 className="w-3.5 h-3.5 text-sky-600" />
-                <span>Campuses ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
+                <Globe2 className="w-3.5 h-3.5 text-teal-600" />
+                <span>Worldwide Directory ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
               </button>
             </div>
           </div>
@@ -195,16 +204,23 @@ export const DiscoverView: React.FC = () => {
           >
             All
           </button>
-          {allInterests.map((item) => {
+          {allInterests.map((item, i) => {
+            const pillColors = [
+              { active: 'bg-sky-600 text-white font-bold', inactive: 'bg-sky-50 text-sky-800 border border-sky-200 hover:bg-sky-100' },
+              { active: 'bg-emerald-600 text-white font-bold', inactive: 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100' },
+              { active: 'bg-amber-500 text-white font-bold', inactive: 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100' },
+              { active: 'bg-purple-600 text-white font-bold', inactive: 'bg-purple-50 text-purple-800 border border-purple-200 hover:bg-purple-100' },
+              { active: 'bg-rose-600 text-white font-bold', inactive: 'bg-rose-50 text-rose-800 border border-rose-200 hover:bg-rose-100' },
+              { active: 'bg-teal-600 text-white font-bold', inactive: 'bg-teal-50 text-teal-800 border border-teal-200 hover:bg-teal-100' },
+            ];
+            const theme = pillColors[i % pillColors.length];
             const isSelected = selectedInterest === item;
             return (
               <button
                 key={item}
                 onClick={() => setSelectedInterest(isSelected ? 'all' : item)}
-                className={`px-2.5 py-1 rounded-lg text-xs transition shrink-0 ${
-                  isSelected
-                    ? 'bg-sky-600 text-white font-bold shadow-2xs'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60 font-medium'
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition shrink-0 ${
+                  isSelected ? theme.active : theme.inactive
                 }`}
               >
                 #{item}
@@ -223,14 +239,24 @@ export const DiscoverView: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredUsers.map((user) => {
+          {filteredUsers.map((user, idx) => {
             const connStatus = getConnectionStatus(user.id);
             const isMenuOpen = activeMenuUserId === user.id;
+
+            const schoolColors = [
+              'border-l-sky-500',
+              'border-l-emerald-500',
+              'border-l-amber-500',
+              'border-l-purple-500',
+              'border-l-rose-500',
+              'border-l-teal-500',
+            ];
+            const borderCol = schoolColors[idx % schoolColors.length];
 
             return (
               <div
                 key={user.id}
-                className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-xs hover:border-slate-300 hover:shadow-sm transition flex flex-col justify-between relative"
+                className={`bg-white border-2 border-slate-200 rounded-2xl p-5 shadow-xs hover:border-slate-300 transition flex flex-col justify-between relative border-l-4 ${borderCol}`}
               >
                 <div>
                   {/* Top Card Info */}

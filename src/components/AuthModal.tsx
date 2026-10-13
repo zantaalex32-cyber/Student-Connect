@@ -195,11 +195,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 text-slate-900 relative my-6 overflow-hidden">
+      <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border-2 border-slate-200 text-slate-900 relative my-6 overflow-hidden">
+        {/* Brand Stripes Header */}
+        <div className="h-2 w-full flex">
+          <div className="flex-1 bg-sky-500" />
+          <div className="flex-1 bg-emerald-500" />
+          <div className="flex-1 bg-amber-400" />
+          <div className="flex-1 bg-rose-500" />
+          <div className="flex-1 bg-purple-600" />
+          <div className="flex-1 bg-indigo-600" />
+        </div>
+
         {/* Modal Header */}
         <div className="px-6 pt-5 pb-3 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-xl bg-sky-600 text-white flex items-center justify-center shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-xs">
               {mode === 'session' ? (
                 <ShieldCheck className="w-5 h-5 text-white" />
               ) : mode === 'signup' ? (
@@ -219,7 +229,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   : 'Student Sign In'}
               </h2>
               <p className="text-xs text-slate-500">
-                Firebase Authentication & Academic Network
+                Firebase Authentication & Verified Academic Cloud Sync
               </p>
             </div>
           </div>
@@ -243,7 +253,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               }}
               className={`pb-2.5 px-4 text-xs font-bold transition border-b-2 flex items-center gap-1.5 ${
                 mode === 'login'
-                  ? 'border-sky-600 text-sky-700 bg-white rounded-t-lg -mb-px'
+                  ? 'border-indigo-600 text-indigo-700 bg-white rounded-t-lg -mb-px'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -258,7 +268,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               }}
               className={`pb-2.5 px-4 text-xs font-bold transition border-b-2 flex items-center gap-1.5 ${
                 mode === 'signup'
-                  ? 'border-sky-600 text-sky-700 bg-white rounded-t-lg -mb-px'
+                  ? 'border-indigo-600 text-indigo-700 bg-white rounded-t-lg -mb-px'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
@@ -574,7 +584,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-2.5 px-4 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-700 transition shadow-xs flex items-center justify-center gap-2 mt-4"
+                  className="w-full py-2.5 px-4 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2 mt-4"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -615,7 +625,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="student@uonbi.ac.ke or your registered email"
-                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
                     />
                   </div>
                 </div>
@@ -624,7 +634,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 py-2.5 px-4 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-700 transition shadow-xs flex items-center justify-center gap-2"
+                    className="flex-1 py-2.5 px-4 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <KeyRound className="w-4 h-4" />}
                     <span>{isSubmitting ? 'Sending Link...' : 'Send Password Reset Link'}</span>
@@ -651,9 +661,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Encrypted & Verified Campus Network</span>
+            <span>End-to-End Encrypted & GDPR Compliant</span>
           </div>
-          <span className="font-semibold text-sky-700">StudentsConnect</span>
+          <span className="font-semibold text-indigo-700">Students Connect Auth</span>
         </div>
       </div>
     </div>

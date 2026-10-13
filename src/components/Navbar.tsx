@@ -59,7 +59,17 @@ export const Navbar: React.FC = () => {
   const isCurrentlyEmpty = groups.length === 0 && events.length === 0;
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b border-slate-200/80 shadow-xs">
+    <header className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
+      {/* Top Colorful Brand Stripes (Solid colors matching logo, strictly NO gradients) */}
+      <div className="h-1.5 w-full flex">
+        <div className="flex-1 bg-sky-500" />
+        <div className="flex-1 bg-emerald-500" />
+        <div className="flex-1 bg-amber-400" />
+        <div className="flex-1 bg-rose-500" />
+        <div className="flex-1 bg-purple-600" />
+        <div className="flex-1 bg-indigo-600" />
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Logo and Brand */}
         <div className="flex items-center gap-4 sm:gap-6">
@@ -70,47 +80,41 @@ export const Navbar: React.FC = () => {
             <Logo size={36} showText={true} />
           </button>
 
-          {/* Campus Filter Toggle (My University vs Cross-University vs Worldwide) */}
-          <div className="hidden lg:flex items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200 text-xs">
+          {/* Campus Filter Toggle (My University vs Cross-University) */}
+          <div className="hidden lg:flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
             <button
-              onClick={() => {
-                setFilterUniversityOnly(true);
-                if (activeTab === 'universities') setActiveTab('dashboard');
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition ${
-                filterUniversityOnly && activeTab !== 'universities'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              onClick={() => setFilterUniversityOnly(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
+                filterUniversityOnly
+                  ? 'bg-sky-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <School className={`w-3.5 h-3.5 ${filterUniversityOnly && activeTab !== 'universities' ? 'text-sky-600' : 'text-slate-500'}`} />
+              <School className={`w-3.5 h-3.5 ${filterUniversityOnly ? 'text-white' : 'text-sky-600'}`} />
               <span>{currentUser.university.split(' ')[0]} Campus</span>
             </button>
             <button
-              onClick={() => {
-                setFilterUniversityOnly(false);
-                if (activeTab === 'universities') setActiveTab('dashboard');
-              }}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition ${
-                !filterUniversityOnly && activeTab !== 'universities'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              onClick={() => setFilterUniversityOnly(false)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition ${
+                !filterUniversityOnly
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <Globe className={`w-3.5 h-3.5 ${!filterUniversityOnly && activeTab !== 'universities' ? 'text-sky-600' : 'text-slate-500'}`} />
+              <Globe className={`w-3.5 h-3.5 ${!filterUniversityOnly ? 'text-white' : 'text-indigo-600'}`} />
               <span>Global Academic</span>
             </button>
             <button
               onClick={() => setActiveTab('universities')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold transition shadow-xs ${
                 activeTab === 'universities'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-teal-600 text-white shadow-xs'
+                  : 'text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-300'
               }`}
               title="Explore accredited universities worldwide"
             >
-              <Globe2 className={`w-3.5 h-3.5 ${activeTab === 'universities' ? 'text-sky-600' : 'text-slate-500'}`} />
-              <span>Campuses ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
+              <Globe2 className={`w-3.5 h-3.5 ${activeTab === 'universities' ? 'text-white' : 'text-teal-600'}`} />
+              <span>Worldwide Approved ({WORLDWIDE_APPROVED_UNIVERSITIES.length}+)</span>
             </button>
           </div>
         </div>
@@ -118,7 +122,7 @@ export const Navbar: React.FC = () => {
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 max-w-md mx-2">
           <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-sky-600 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
@@ -144,9 +148,9 @@ export const Navbar: React.FC = () => {
             <button
               onClick={loadSampleData}
               title="Populate app with starter university groups and events"
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-sky-50 text-sky-800 hover:bg-sky-100 border border-sky-200 transition shadow-2xs"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 transition shadow-xs"
             >
-              <Sparkles className="w-3.5 h-3.5 text-sky-600" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-950" />
               <span>Load Starter Data</span>
             </button>
           ) : (
@@ -167,7 +171,7 @@ export const Navbar: React.FC = () => {
           {firebaseUser ? (
             <button
               onClick={() => openAuthModal('session')}
-              title="View active Firebase session and security metadata"
+              title="View active Firebase session, tokens, and security metadata"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition shadow-2xs"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -177,7 +181,7 @@ export const Navbar: React.FC = () => {
             <button
               onClick={() => openAuthModal('login')}
               disabled={isFirebaseLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-sky-600 hover:bg-sky-700 transition shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs"
               title="Sign in or register your student account via Firebase Auth"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -189,9 +193,9 @@ export const Navbar: React.FC = () => {
           <button
             onClick={() => setIsWhatsAppSupportOpen(true)}
             title="Campus Support Hotline on WhatsApp"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition shadow-2xs"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-xs"
           >
-            <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+            <MessageCircle className="w-3.5 h-3.5 text-white" />
             <span>Support</span>
           </button>
 
