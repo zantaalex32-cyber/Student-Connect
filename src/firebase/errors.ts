@@ -26,13 +26,25 @@ export interface FirestoreErrorInfo {
   };
 }
 
+// Redacts API keys and sensitive tokens to prevent accidental exposure in errors and logs
+export function scrubSecrets(input: string): string {
+  if (!input) return input;
+  return input
+    .replace(/AIza[0-9A-Za-z-_]{35}/g, '[REDACTED_API_KEY]')
+    .replace(/([?&]key=)[^&]+/gi, '$1[REDACTED_API_KEY]')
+    .replace(/(apiKey|api_key|secret|token)=([a-zA-Z0-9_\-\.]+)/gi, '$1=[REDACTED]');
+}
+
 export function handleFirestoreError(
   error: unknown, 
   operationType: OperationType, 
   path: string | null
 ): never {
+  const rawMsg = error instanceof Error ? error.message : String(error);
+  const sanitizedMsg = scrubSecrets(rawMsg);
+
   const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
+    error: sanitizedMsg,
     authInfo: {
       userId: auth.currentUser?.uid || null,
       email: auth.currentUser?.email || null,

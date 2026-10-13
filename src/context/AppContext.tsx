@@ -28,6 +28,14 @@ import {
   onAuthStateChanged,
   FirebaseUser 
 } from '../firebase/config';
+import { 
+  signInWithGoogle as authServiceSignInGoogle,
+  signInWithEmail as authServiceSignInEmail,
+  signUpWithEmail as authServiceSignUpEmail,
+  sendPasswordReset as authServiceResetPassword,
+  resendVerification as authServiceResendVerification,
+  signOutUser as authServiceSignOut
+} from '../firebase/authService';
 import { handleFirestoreError, OperationType } from '../firebase/errors';
 import { 
   collection, 
@@ -78,11 +86,20 @@ interface AppContextType {
   reportTarget: { type: 'user' | 'group' | 'message'; id: string; name: string } | null;
   setReportTarget: (target: { type: 'user' | 'group' | 'message'; id: string; name: string } | null) => void;
 
-  // Firebase Auth & Cloud Sync
+  // Firebase Auth & Session Management
+  isAuthModalOpen: boolean;
+  setIsAuthModalOpen: (open: boolean) => void;
+  authModalMode: 'login' | 'signup' | 'session';
+  setAuthModalMode: (mode: 'login' | 'signup' | 'session') => void;
+  openAuthModal: (mode?: 'login' | 'signup' | 'session') => void;
   firebaseUser: FirebaseUser | null;
   isFirebaseLoading: boolean;
   isFirebaseConnected: boolean;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmailPassword: (email: string, pass: string) => Promise<void>;
+  signUpWithEmailPassword: (email: string, pass: string, name: string, uni: string, course?: string) => Promise<void>;
+  sendPasswordResetRequest: (email: string) => Promise<void>;
+  sendVerificationEmailRequest: () => Promise<void>;
   signOutUser: () => Promise<void>;
   
   // Core Actions
@@ -199,6 +216,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [reportTarget, setReportTarget] = useState<{ type: 'user' | 'group' | 'message'; id: string; name: string } | null>(null);
 
+  // Firebase Auth & Session Modal
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | 'session'>('login');
+
+  const openAuthModal = (mode: 'login' | 'signup' | 'session' = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
   const [pushPermissionState, setPushPermissionState] = useState<NotificationPermission | 'unsupported'>('default');
 
   // Firebase Auth State
@@ -304,36 +330,101 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const signInWithGoogle = async () => {
     try {
       setIsFirebaseLoading(true);
-      await signInWithPopup(auth, googleProvider);
+      const { profile } = await authServiceSignInGoogle();
+      setCurrentUser(profile);
+      setUsers(prev => [profile, ...prev.filter(u => u.id !== profile.id)]);
       addNotification({
         type: 'system',
         title: 'Signed in with Firebase',
-        body: 'Your student account is now authenticated and cloud-synced with Firebase Firestore.',
+        body: `Welcome, ${profile.name}! Your student account is now authenticated and cloud-synced with Firestore.`,
       });
     } catch (err: any) {
       console.error('Google Sign In error:', err);
-      addNotification({
-        type: 'system',
-        title: 'Authentication Notice',
-        body: err?.message || 'Could not complete Google Sign In. Continuing in local mode.',
-      });
+      throw err;
     } finally {
       setIsFirebaseLoading(false);
     }
   };
 
+  // Email / Password Sign In
+  const signInWithEmailPassword = async (email: string, pass: string) => {
+    try {
+      setIsFirebaseLoading(true);
+      const { profile } = await authServiceSignInEmail(email, pass);
+      setCurrentUser(profile);
+      setUsers(prev => [profile, ...prev.filter(u => u.id !== profile.id)]);
+      addNotification({
+        type: 'system',
+        title: 'Signed in to Campus',
+        body: `Welcome back, ${profile.name} (${profile.university})!`,
+      });
+    } catch (err: any) {
+      console.error('Email Sign In error:', err);
+      throw err;
+    } finally {
+      setIsFirebaseLoading(false);
+    }
+  };
+
+  // Email / Password Sign Up
+  const signUpWithEmailPassword = async (
+    email: string,
+    pass: string,
+    name: string,
+    uni: string,
+    course?: string
+  ) => {
+    try {
+      setIsFirebaseLoading(true);
+      const { profile } = await authServiceSignUpEmail(email, pass, name, uni, course);
+      setCurrentUser(profile);
+      setUsers(prev => [profile, ...prev.filter(u => u.id !== profile.id)]);
+      addNotification({
+        type: 'system',
+        title: 'Welcome to Students Connect',
+        body: `Your verified academic profile has been created for ${profile.university}.`,
+      });
+    } catch (err: any) {
+      console.error('Email Sign Up error:', err);
+      throw err;
+    } finally {
+      setIsFirebaseLoading(false);
+    }
+  };
+
+  // Password Reset
+  const sendPasswordResetRequest = async (email: string) => {
+    await authServiceResetPassword(email);
+    addNotification({
+      type: 'system',
+      title: 'Password Reset Dispatched',
+      body: `A password reset link has been dispatched to ${email}.`,
+    });
+  };
+
+  // Resend Email Verification
+  const sendVerificationEmailRequest = async () => {
+    await authServiceResendVerification();
+    addNotification({
+      type: 'system',
+      title: 'Verification Email Sent',
+      body: 'Check your student email inbox for the verification link.',
+    });
+  };
+
   // Sign Out
   const signOutUser = async () => {
     try {
-      await signOut(auth);
+      await authServiceSignOut();
       setFirebaseUser(null);
       addNotification({
         type: 'system',
         title: 'Signed Out',
-        body: 'You have signed out of Firebase. Local student profile is active.',
+        body: 'You have signed out of Firebase. Session closed securely.',
       });
     } catch (err) {
       console.error('Sign Out error:', err);
+      throw err;
     }
   };
 
@@ -1001,10 +1092,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsReportModalOpen,
         reportTarget,
         setReportTarget,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        authModalMode,
+        setAuthModalMode,
+        openAuthModal,
         firebaseUser,
         isFirebaseLoading,
         isFirebaseConnected,
         signInWithGoogle,
+        signInWithEmailPassword,
+        signUpWithEmailPassword,
+        sendPasswordResetRequest,
+        sendVerificationEmailRequest,
         signOutUser,
         switchUser,
         updateUserProfile,

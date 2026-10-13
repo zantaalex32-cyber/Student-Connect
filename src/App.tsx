@@ -19,6 +19,7 @@ import { UploadResourceModal } from './components/UploadResourceModal';
 import { WhatsAppSupportModal } from './components/WhatsAppSupportModal';
 import { ReportModal } from './components/ReportModal';
 import { WorldwideUniversitiesModal } from './components/WorldwideUniversitiesModal';
+import { AuthModal } from './components/AuthModal';
 
 const AppContent: React.FC = () => {
   const { 
@@ -27,6 +28,9 @@ const AppContent: React.FC = () => {
     setIsWhatsAppSupportOpen,
     isWorldwideUniModalOpen,
     setIsWorldwideUniModalOpen,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    authModalMode,
   } = useApp();
 
   const renderActiveView = () => {
@@ -86,6 +90,11 @@ const AppContent: React.FC = () => {
       <WorldwideUniversitiesModal
         isOpen={isWorldwideUniModalOpen}
         onClose={() => setIsWorldwideUniModalOpen(false)}
+      />
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authModalMode}
       />
     </div>
   );

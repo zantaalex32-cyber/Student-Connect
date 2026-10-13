@@ -19,7 +19,9 @@ import {
   MessageCircle, 
   Shield, 
   ExternalLink,
-  Globe2
+  Globe2,
+  LogIn,
+  KeyRound
 } from 'lucide-react';
 
 export const ProfileView: React.FC = () => {
@@ -31,6 +33,9 @@ export const ProfileView: React.FC = () => {
     setActiveTab,
     setIsWhatsAppSupportOpen,
     setIsWorldwideUniModalOpen,
+    firebaseUser,
+    openAuthModal,
+    signOutUser,
   } = useApp();
 
   const [name, setName] = useState(currentUser.name);
@@ -356,6 +361,77 @@ export const ProfileView: React.FC = () => {
               </label>
             </div>
           </div>
+        </div>
+
+        {/* Firebase Authentication & Session Security */}
+        <div className="p-5 rounded-2xl bg-indigo-50/70 border-2 border-indigo-200 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-indigo-600" />
+              <div>
+                <h3 className="text-xs font-bold text-indigo-950 uppercase tracking-wider">
+                  Firebase Authentication & Cloud Session
+                </h3>
+                <p className="text-[11px] text-indigo-800">
+                  {firebaseUser
+                    ? 'Secure cloud session active with Firestore sync.'
+                    : 'Currently in local session. Sign in to sync your student profile to Firebase.'}
+                </p>
+              </div>
+            </div>
+
+            {firebaseUser ? (
+              <span className="text-[10px] font-bold bg-emerald-600 text-white px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-2xs">
+                <ShieldCheck className="w-3 h-3" />
+                Authenticated
+              </span>
+            ) : (
+              <span className="text-[10px] font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+                Local Session
+              </span>
+            )}
+          </div>
+
+          {firebaseUser ? (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-indigo-100">
+              <div className="text-xs">
+                <span className="text-slate-500 font-semibold block text-[10px]">Cloud Account</span>
+                <span className="font-bold text-slate-900">{firebaseUser.email}</span>
+                <span className="font-mono text-[10px] text-indigo-700 block mt-0.5">UID: {firebaseUser.uid}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => openAuthModal('session')}
+                  className="px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition shadow-xs flex items-center gap-1"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Manage Session</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => signOutUser()}
+                  className="px-3 py-1.5 text-xs font-bold rounded-xl bg-white hover:bg-rose-50 text-rose-700 border border-slate-200 hover:border-rose-300 transition"
+                >
+                  Sign Out
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between pt-2 border-t border-indigo-100">
+              <p className="text-xs text-slate-600">
+                Sign in with Google or your student email to activate real-time collaboration.
+              </p>
+              <button
+                type="button"
+                onClick={() => openAuthModal('login')}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white transition shadow-xs flex items-center gap-1.5 shrink-0"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Sign In / Register</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* E2EE Security Keys */}

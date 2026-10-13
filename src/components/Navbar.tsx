@@ -49,6 +49,7 @@ export const Navbar: React.FC = () => {
     isFirebaseLoading,
     signInWithGoogle,
     signOutUser,
+    openAuthModal,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -166,21 +167,25 @@ export const Navbar: React.FC = () => {
           {/* PWA Install Button */}
           <PWAInstallPrompt />
 
-          {/* Firebase Cloud Sync Button */}
+          {/* Firebase Authentication & Session Button */}
           {firebaseUser ? (
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-xl text-emerald-800 bg-emerald-50 border border-emerald-300 shadow-2xs">
-              <Cloud className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Firebase Synced</span>
-            </div>
+            <button
+              onClick={() => openAuthModal('session')}
+              title="View active Firebase session, tokens, and security metadata"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition shadow-2xs"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Session Active</span>
+            </button>
           ) : (
             <button
-              onClick={signInWithGoogle}
+              onClick={() => openAuthModal('login')}
               disabled={isFirebaseLoading}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs"
-              title="Sign in with Google to sync your student profile to Firebase"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs"
+              title="Sign in or register your student account via Firebase Auth"
             >
               <LogIn className="w-3.5 h-3.5" />
-              <span>{isFirebaseLoading ? 'Connecting...' : 'Google Sign In'}</span>
+              <span>{isFirebaseLoading ? 'Connecting...' : 'Sign In / Register'}</span>
             </button>
           )}
 
@@ -352,30 +357,41 @@ export const Navbar: React.FC = () => {
                   {firebaseUser ? (
                     <div className="space-y-2">
                       <p className="text-[11px] text-slate-700 truncate font-medium">
-                        Connected as: <span className="font-semibold text-slate-900">{firebaseUser.email}</span>
+                        Session: <span className="font-semibold text-slate-900">{firebaseUser.email}</span>
                       </p>
-                      <button
-                        onClick={() => {
-                          signOutUser();
-                          setShowUserMenu(false);
-                        }}
-                        className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition"
-                      >
-                        <LogOut className="w-3.5 h-3.5" />
-                        <span>Sign Out of Firebase</span>
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => {
+                            openAuthModal('session');
+                            setShowUserMenu(false);
+                          }}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold transition"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>Manage Session</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            signOutUser();
+                            setShowUserMenu(false);
+                          }}
+                          title="Sign Out"
+                          className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition shrink-0"
+                        >
+                          <LogOut className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <button
                       onClick={() => {
-                        signInWithGoogle();
+                        openAuthModal('login');
                         setShowUserMenu(false);
                       }}
-                      disabled={isFirebaseLoading}
                       className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-xs"
                     >
                       <LogIn className="w-3.5 h-3.5" />
-                      <span>{isFirebaseLoading ? 'Connecting...' : 'Sign In with Google'}</span>
+                      <span>Sign In / Create Account</span>
                     </button>
                   )}
                 </div>
