@@ -1,0 +1,172 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Student profile with academic institution verification, encrypted fingerprint, and privacy settings.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 120, "minLength": 1 },
+        "email": { "type": "string", "format": "email", "maxLength": 150 },
+        "avatar": { "type": "string", "maxLength": 500 },
+        "university": { "type": "string", "maxLength": 200 },
+        "school": { "type": "string", "maxLength": 200 },
+        "course": { "type": "string", "maxLength": 200 },
+        "yearOfStudy": { "type": "string", "maxLength": 50 },
+        "interests": { "type": "array", "description": "Academic and career interests list" },
+        "skills": { "type": "array", "description": "Technical and coursework skills" },
+        "hobbies": { "type": "array", "description": "Clubs and recreational activities" },
+        "bio": { "type": "string", "maxLength": 1000 },
+        "verified": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["online", "offline", "studying", "in_class"] },
+        "visibility": { "type": "string", "enum": ["public", "university_only", "friends_only", "private"] },
+        "allowDMs": { "type": "boolean" },
+        "showEmail": { "type": "boolean" },
+        "e2eeFingerprint": { "type": "string", "maxLength": 100 },
+        "blockedUserIds": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "email", "university"]
+    },
+    "Group": {
+      "title": "Group",
+      "description": "Student study group, project team, or campus networking circle.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 150, "minLength": 2 },
+        "category": { "type": "string", "enum": ["study_group", "project_team", "networking_circle", "friend_group"] },
+        "description": { "type": "string", "maxLength": 1500 },
+        "university": { "type": "string", "maxLength": 200 },
+        "course": { "type": "string", "maxLength": 200 },
+        "avatar": { "type": "string", "maxLength": 500 },
+        "solidBadgeColor": { "type": "string", "maxLength": 30 },
+        "privacy": { "type": "string", "enum": ["public", "university_only", "request_to_join", "private_invite"] },
+        "tags": { "type": "array" },
+        "creatorId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "category", "university", "creatorId"]
+    },
+    "GroupMember": {
+      "title": "GroupMember",
+      "description": "Membership record in a study group or team workspace.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "maxLength": 128 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["admin", "moderator", "member"] },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "groupId", "role"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Encrypted direct message or group conversation text.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "senderId": { "type": "string", "maxLength": 128 },
+        "recipientId": { "type": "string", "maxLength": 128 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "content": { "type": "string", "maxLength": 5000 },
+        "encrypted": { "type": "boolean" },
+        "iv": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["sent", "delivered", "read"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "senderId", "content"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Campus study session, revision workshop, or peer meetup.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 2 },
+        "category": { "type": "string", "maxLength": 50 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "university": { "type": "string", "maxLength": 200 },
+        "locationType": { "type": "string", "enum": ["in_person", "online"] },
+        "locationDetails": { "type": "string", "maxLength": 300 },
+        "dateTime": { "type": "string", "format": "date-time" },
+        "duration": { "type": "string", "maxLength": 50 },
+        "organizerId": { "type": "string", "maxLength": 128 },
+        "organizerName": { "type": "string", "maxLength": 120 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "groupName": { "type": "string", "maxLength": 150 },
+        "maxAttendees": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "university", "dateTime", "organizerId"]
+    },
+    "Resource": {
+      "title": "Resource",
+      "description": "Shared academic lecture note, past paper, or cheat sheet.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 2 },
+        "fileType": { "type": "string", "maxLength": 50 },
+        "fileUrl": { "type": "string", "maxLength": 500 },
+        "size": { "type": "string", "maxLength": 50 },
+        "uploadedBy": { "type": "string", "maxLength": 128 },
+        "uploadedByName": { "type": "string", "maxLength": 120 },
+        "uploadedAt": { "type": "string", "format": "date-time" },
+        "downloadCount": { "type": "number" }
+      },
+      "required": ["id", "groupId", "title", "uploadedBy"]
+    },
+    "Task": {
+      "title": "Task",
+      "description": "Collaborative project task on Kanban board.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "groupId": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 200, "minLength": 2 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["todo", "in_progress", "done"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+        "assigneeId": { "type": "string", "maxLength": 128 },
+        "dueDate": { "type": "string", "maxLength": 50 },
+        "creatorId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "groupId", "title", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Verified student academic profiles and credentials."
+    },
+    "/groups/{groupId}": {
+      "schema": { "$ref": "#/entities/Group" },
+      "description": "Study groups, project teams, and campus circles."
+    },
+    "/groups/{groupId}/members/{memberId}": {
+      "schema": { "$ref": "#/entities/GroupMember" },
+      "description": "Workspace memberships and moderation roles."
+    },
+    "/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Direct and group communications with encrypted metadata."
+    },
+    "/events/{eventId}": {
+      "schema": { "$ref": "#/entities/Event" },
+      "description": "Campus study sessions, revision workshops, and social meetups."
+    },
+    "/resources/{resourceId}": {
+      "schema": { "$ref": "#/entities/Resource" },
+      "description": "Coursework revision documents, summaries, and shared notes."
+    },
+    "/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/Task" },
+      "description": "Task items and sprint cards inside group workspaces."
+    }
+  }
+}

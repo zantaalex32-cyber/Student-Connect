@@ -19,6 +19,25 @@ import {
   INITIAL_EVENTS,
   INITIAL_NOTIFICATIONS,
 } from '../data/mockData';
+import { 
+  auth, 
+  db, 
+  googleProvider, 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged,
+  FirebaseUser 
+} from '../firebase/config';
+import { handleFirestoreError, OperationType } from '../firebase/errors';
+import { 
+  collection, 
+  doc, 
+  getDoc, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc,
+  onSnapshot 
+} from 'firebase/firestore';
 
 interface AppContextType {
   currentUser: User;
@@ -58,6 +77,13 @@ interface AppContextType {
   setIsReportModalOpen: (open: boolean) => void;
   reportTarget: { type: 'user' | 'group' | 'message'; id: string; name: string } | null;
   setReportTarget: (target: { type: 'user' | 'group' | 'message'; id: string; name: string } | null) => void;
+
+  // Firebase Auth & Cloud Sync
+  firebaseUser: FirebaseUser | null;
+  isFirebaseLoading: boolean;
+  isFirebaseConnected: boolean;
+  signInWithGoogle: () => Promise<void>;
+  signOutUser: () => Promise<void>;
   
   // Core Actions
   switchUser: (userId: string) => void;
@@ -175,6 +201,142 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [pushPermissionState, setPushPermissionState] = useState<NotificationPermission | 'unsupported'>('default');
 
+  // Firebase Auth State
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [isFirebaseLoading, setIsFirebaseLoading] = useState<boolean>(true);
+  const [isFirebaseConnected, setIsFirebaseConnected] = useState<boolean>(false);
+
+  // Monitor Firebase Authentication
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseUser(fbUser);
+      setIsFirebaseLoading(false);
+      setIsFirebaseConnected(true);
+
+      if (fbUser) {
+        try {
+          const userDocRef = doc(db, 'users', fbUser.uid);
+          const snap = await getDoc(userDocRef);
+          if (snap.exists()) {
+            const data = snap.data() as User;
+            setCurrentUser(data);
+            setUsers(prev => {
+              const exists = prev.some(u => u.id === data.id);
+              return exists ? prev.map(u => u.id === data.id ? data : u) : [data, ...prev];
+            });
+          } else {
+            const newProfile: User = {
+              id: fbUser.uid,
+              name: fbUser.displayName || 'Campus Student',
+              email: fbUser.email || '',
+              avatar: fbUser.photoURL || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+              university: currentUser.university || 'University of Nairobi',
+              school: currentUser.school || 'Faculty of Science & Technology',
+              course: currentUser.course || 'B.Sc. Computer Science',
+              yearOfStudy: currentUser.yearOfStudy || 'Year 2',
+              interests: currentUser.interests || ['Artificial Intelligence', 'Data Science', 'Software Engineering'],
+              skills: currentUser.skills || ['Python', 'JavaScript', 'Problem Solving'],
+              hobbies: currentUser.hobbies || ['Chess', 'Photography', 'Music'],
+              bio: currentUser.bio || 'Verified Student at ' + (currentUser.university || 'University of Nairobi'),
+              verified: true,
+              status: 'online',
+              visibility: 'public',
+              allowDMs: true,
+              showEmail: true,
+              e2eeFingerprint: `SC-${Math.random().toString(36).substring(2, 6).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+              blockedUserIds: [],
+            };
+            await setDoc(userDocRef, newProfile);
+            setCurrentUser(newProfile);
+            setUsers(prev => [newProfile, ...prev.filter(u => u.id !== newProfile.id)]);
+          }
+        } catch (error) {
+          handleFirestoreError(error, OperationType.GET, `users/${fbUser.uid}`);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Real-time Firestore sync when authenticated
+  useEffect(() => {
+    if (!firebaseUser) return;
+
+    // Groups live listener
+    const unsubGroups = onSnapshot(collection(db, 'groups'), (snapshot) => {
+      if (!snapshot.empty) {
+        const remoteGroups = snapshot.docs.map(d => d.data() as Group);
+        setGroups(remoteGroups);
+      }
+    }, (err) => {
+      console.warn('Firestore groups snapshot notice:', err.message);
+    });
+
+    // Events live listener
+    const unsubEvents = onSnapshot(collection(db, 'events'), (snapshot) => {
+      if (!snapshot.empty) {
+        const remoteEvents = snapshot.docs.map(d => d.data() as EventItem);
+        setEvents(remoteEvents);
+      }
+    }, (err) => {
+      console.warn('Firestore events snapshot notice:', err.message);
+    });
+
+    // Messages live listener
+    const unsubMessages = onSnapshot(collection(db, 'messages'), (snapshot) => {
+      if (!snapshot.empty) {
+        const remoteMessages = snapshot.docs.map(d => d.data() as Message);
+        setMessages(remoteMessages);
+      }
+    }, (err) => {
+      console.warn('Firestore messages snapshot notice:', err.message);
+    });
+
+    return () => {
+      unsubGroups();
+      unsubEvents();
+      unsubMessages();
+    };
+  }, [firebaseUser]);
+
+  // Google Sign-In via Popup
+  const signInWithGoogle = async () => {
+    try {
+      setIsFirebaseLoading(true);
+      await signInWithPopup(auth, googleProvider);
+      addNotification({
+        type: 'system',
+        title: 'Signed in with Firebase',
+        body: 'Your student account is now authenticated and cloud-synced with Firebase Firestore.',
+      });
+    } catch (err: any) {
+      console.error('Google Sign In error:', err);
+      addNotification({
+        type: 'system',
+        title: 'Authentication Notice',
+        body: err?.message || 'Could not complete Google Sign In. Continuing in local mode.',
+      });
+    } finally {
+      setIsFirebaseLoading(false);
+    }
+  };
+
+  // Sign Out
+  const signOutUser = async () => {
+    try {
+      await signOut(auth);
+      setFirebaseUser(null);
+      addNotification({
+        type: 'system',
+        title: 'Signed Out',
+        body: 'You have signed out of Firebase. Local student profile is active.',
+      });
+    } catch (err) {
+      console.error('Sign Out error:', err);
+    }
+  };
+
   // Push notification support check
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -289,6 +451,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setUsers(all => all.map(u => (u.id === prev.id ? next : u)));
       return next;
     });
+
+    if (auth.currentUser) {
+      updateDoc(doc(db, 'users', auth.currentUser.uid), updated).catch(err => {
+        handleFirestoreError(err, OperationType.UPDATE, `users/${auth.currentUser?.uid}`);
+      });
+    }
+
     addNotification({
       type: 'system',
       title: 'Profile Updated',
@@ -314,6 +483,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
 
     setMessages(prev => [...prev, newMsg]);
+
+    if (auth.currentUser) {
+      setDoc(doc(db, 'messages', newMsg.id), {
+        id: newMsg.id,
+        senderId: auth.currentUser.uid,
+        recipientId,
+        content: text,
+        encrypted: true,
+        status: 'delivered',
+        timestamp: new Date().toISOString(),
+      }).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `messages/${newMsg.id}`);
+      });
+    }
 
     // Realistic auto-reply simulation after 1.5 seconds if talking to another student
     const recipient = users.find(u => u.id === recipientId);
@@ -366,6 +549,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setMessages(prev => [...prev, newMsg]);
 
+    if (auth.currentUser) {
+      setDoc(doc(db, 'messages', newMsg.id), {
+        id: newMsg.id,
+        senderId: auth.currentUser.uid,
+        groupId,
+        content: text,
+        encrypted: true,
+        status: 'delivered',
+        timestamp: new Date().toISOString(),
+      }).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `messages/${newMsg.id}`);
+      });
+    }
+
     // Send notifications to group members
     if (targetGroup) {
       // In a real app backend notifies; here we simulate peer engagement
@@ -383,6 +580,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setGroups(prev => [newGroup, ...prev]);
     setCurrentGroup(newGroup);
+
+    if (auth.currentUser) {
+      setDoc(doc(db, 'groups', id), newGroup).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `groups/${id}`);
+      });
+    }
+
     addNotification({
       type: 'system',
       title: 'New Workspace Initialized',
@@ -437,6 +641,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       uploadedAt: 'Just now',
     };
     setResources(prev => [newRes, ...prev]);
+
+    if (auth.currentUser) {
+      setDoc(doc(db, 'resources', newRes.id), {
+        id: newRes.id,
+        groupId: newRes.groupId,
+        title: newRes.title,
+        fileType: newRes.fileType || 'pdf',
+        size: newRes.fileSize || '1 MB',
+        uploadedBy: auth.currentUser.uid,
+        uploadedByName: currentUser.name,
+        uploadedAt: new Date().toISOString(),
+      }).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `resources/${newRes.id}`);
+      });
+    }
+
     addNotification({
       type: 'file_upload',
       title: 'File Uploaded to Workspace',
@@ -447,6 +667,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteWorkspaceResource = (resourceId: string) => {
     setResources(prev => prev.filter(r => r.id !== resourceId));
+    if (auth.currentUser) {
+      deleteDoc(doc(db, 'resources', resourceId)).catch(err => {
+        handleFirestoreError(err, OperationType.DELETE, `resources/${resourceId}`);
+      });
+    }
   };
 
   // Workspace Task
@@ -458,10 +683,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       createdAt: new Date().toISOString().split('T')[0],
     };
     setTasks(prev => [newTask, ...prev]);
+
+    if (auth.currentUser) {
+      setDoc(doc(db, 'tasks', newTask.id), {
+        id: newTask.id,
+        groupId: newTask.groupId,
+        title: newTask.title,
+        description: newTask.description || '',
+        status: newTask.status || 'todo',
+        creatorId: auth.currentUser.uid,
+        createdAt: new Date().toISOString(),
+      }).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `tasks/${newTask.id}`);
+      });
+    }
   };
 
   const updateTaskStatus = (taskId: string, status: WorkspaceTask['status']) => {
     setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, status } : t)));
+    if (auth.currentUser) {
+      updateDoc(doc(db, 'tasks', taskId), { status }).catch(err => {
+        handleFirestoreError(err, OperationType.UPDATE, `tasks/${taskId}`);
+      });
+    }
   };
 
   // Events logic
@@ -483,6 +727,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       remindersSet: [currentUser.id],
     };
     setEvents(prev => [newEvent, ...prev]);
+
+    if (auth.currentUser) {
+      setDoc(doc(db, 'events', id), newEvent).catch(err => {
+        handleFirestoreError(err, OperationType.CREATE, `events/${id}`);
+      });
+    }
+
     addNotification({
       type: 'event',
       title: 'New Session Scheduled',
@@ -696,6 +947,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const loadSampleData = () => {
+    setUsers(INITIAL_USERS);
     setGroups(INITIAL_GROUPS);
     setResources(INITIAL_WORKSPACE_RESOURCES);
     setTasks(INITIAL_WORKSPACE_TASKS);
@@ -749,6 +1001,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setIsReportModalOpen,
         reportTarget,
         setReportTarget,
+        firebaseUser,
+        isFirebaseLoading,
+        isFirebaseConnected,
+        signInWithGoogle,
+        signOutUser,
         switchUser,
         updateUserProfile,
         sendDirectMessage,

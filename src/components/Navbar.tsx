@@ -17,7 +17,10 @@ import {
   SlidersHorizontal,
   X,
   Sparkles,
-  RotateCcw
+  RotateCcw,
+  LogIn,
+  LogOut,
+  Cloud
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -42,6 +45,10 @@ export const Navbar: React.FC = () => {
     clearAllData,
     loadSampleData,
     setIsWorldwideUniModalOpen,
+    firebaseUser,
+    isFirebaseLoading,
+    signInWithGoogle,
+    signOutUser,
   } = useApp();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -158,6 +165,24 @@ export const Navbar: React.FC = () => {
 
           {/* PWA Install Button */}
           <PWAInstallPrompt />
+
+          {/* Firebase Cloud Sync Button */}
+          {firebaseUser ? (
+            <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold rounded-xl text-emerald-800 bg-emerald-50 border border-emerald-300 shadow-2xs">
+              <Cloud className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Firebase Synced</span>
+            </div>
+          ) : (
+            <button
+              onClick={signInWithGoogle}
+              disabled={isFirebaseLoading}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-xs"
+              title="Sign in with Google to sync your student profile to Firebase"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>{isFirebaseLoading ? 'Connecting...' : 'Google Sign In'}</span>
+            </button>
+          )}
 
           {/* WhatsApp Campus Support Hotline */}
           <button
@@ -313,6 +338,48 @@ export const Navbar: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Firebase Authentication & Cloud State */}
+                <div className="p-3 bg-indigo-50/60 border-t border-slate-100">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-bold text-indigo-950 uppercase tracking-wider flex items-center gap-1">
+                      <Cloud className="w-3 h-3 text-indigo-600" />
+                      Firebase Cloud Sync
+                    </span>
+                    <span className="text-[9px] bg-indigo-200 text-indigo-900 font-bold px-1.5 py-0.2 rounded">
+                      Firestore
+                    </span>
+                  </div>
+                  {firebaseUser ? (
+                    <div className="space-y-2">
+                      <p className="text-[11px] text-slate-700 truncate font-medium">
+                        Connected as: <span className="font-semibold text-slate-900">{firebaseUser.email}</span>
+                      </p>
+                      <button
+                        onClick={() => {
+                          signOutUser();
+                          setShowUserMenu(false);
+                        }}
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Sign Out of Firebase</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        signInWithGoogle();
+                        setShowUserMenu(false);
+                      }}
+                      disabled={isFirebaseLoading}
+                      className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition shadow-xs"
+                    >
+                      <LogIn className="w-3.5 h-3.5" />
+                      <span>{isFirebaseLoading ? 'Connecting...' : 'Sign In with Google'}</span>
+                    </button>
+                  )}
+                </div>
+
                 <div className="pt-2 px-2 space-y-1">
                   <button
                     onClick={() => {
@@ -325,13 +392,13 @@ export const Navbar: React.FC = () => {
                   </button>
                   <button
                     onClick={() => {
-                      setIsWorldwideUniModalOpen(true);
+                      setActiveTab('universities');
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-xs font-medium text-indigo-700 hover:bg-indigo-50 rounded-lg transition flex items-center justify-between"
+                    className="w-full text-left px-3 py-2 text-xs font-medium text-teal-700 hover:bg-teal-50 rounded-lg transition flex items-center justify-between"
                   >
                     <span>Worldwide Approved Universities</span>
-                    <span className="text-[10px] bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-bold">80+ Campuses</span>
+                    <span className="text-[10px] bg-teal-100 text-teal-800 px-1.5 py-0.5 rounded font-bold">100+ Campuses</span>
                   </button>
                   <button
                     onClick={() => {

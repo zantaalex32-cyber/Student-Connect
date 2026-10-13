@@ -314,6 +314,46 @@ export const UniversitiesView: React.FC = () => {
             );
           })}
         </div>
+
+        {/* Quick Country Shortcuts */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs pt-2 border-t border-slate-100">
+          <span className="text-[10px] font-extrabold uppercase text-slate-500 tracking-wider shrink-0 mr-1">
+            Country Shortcuts:
+          </span>
+          {[
+            { label: '🇰🇪 Kenya', country: 'Kenya' },
+            { label: '🇬🇧 United Kingdom', country: 'United Kingdom' },
+            { label: '🇺🇸 United States', country: 'United States' },
+            { label: '🇨🇦 Canada', country: 'Canada' },
+            { label: '🇦🇺 Australia', country: 'Australia' },
+            { label: '🇿🇦 South Africa', country: 'South Africa' },
+            { label: '🇳🇬 Nigeria', country: 'Nigeria' },
+            { label: '🇪🇬 Egypt', country: 'Egypt' },
+          ].map((item) => (
+            <button
+              key={item.country}
+              onClick={() => {
+                setSelectedCountry(item.country);
+                setSelectedRegion('All Regions');
+              }}
+              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition shrink-0 border ${
+                selectedCountry === item.country
+                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs'
+                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          {selectedCountry !== 'All Countries' && (
+            <button
+              onClick={() => setSelectedCountry('All Countries')}
+              className="px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg shrink-0 ml-1"
+            >
+              Reset Country
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Showing Count Information */}
